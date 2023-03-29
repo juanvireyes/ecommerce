@@ -20,8 +20,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Role::where('name', 'superadmin');
-        Role::where('name', 'admin');
-        Role::where('name', 'client');
+        Role::where('name', 'superadmin')->delete();
+        Role::where('name', 'admin')->delete();
+        Role::where('name', 'client')->delete();
     }
 };
