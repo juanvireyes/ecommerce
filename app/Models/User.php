@@ -17,10 +17,18 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+    protected $fillable = [ // Warning!!!->The fields of the migration that are not included in this array could generate problems with the user registration in the register form.
+        'first_name',
+        'last_name',
         'name',
         'email',
         'password',
+        'cellphone',
+        'address',
+        'city',
+        'state',
+        'country',
+        'is_active'
     ];
 
     /**
