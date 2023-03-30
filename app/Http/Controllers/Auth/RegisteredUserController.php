@@ -81,7 +81,7 @@ class RegisteredUserController extends Controller
 
     public function createSuperAdmin(): View
     {
-        return view('saregister');
+        return view('auth.saregister');
     }
 
     /**

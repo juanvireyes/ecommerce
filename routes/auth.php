@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('superadmin/register', [RegisteredUserController::class], 'createSuperAdmin')
+    Route::get('superadmin/register', [RegisteredUserController::class, 'createSuperAdmin'])
                 ->name('saregister');
     
     Route::post('superadmin/register', [RegisteredUserController::class, 'storeSuperAdmin']);
