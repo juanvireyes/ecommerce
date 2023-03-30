@@ -23,6 +23,12 @@
                             <img src="{{ asset('images/dashboard.png') }}" class="h12 w-12 mx-auto">
                             <p class="text-red-500 text-lg text-center font-bold">Dashboard</p>
                         </a>
+                        <div class="inline-block mr-7">
+                            <a href="{{ route('profile.edit') }}" class="text-red-500 text-lg text-center font-bold">
+                                <img src="{{ asset('images/user.png') }}" class="h-12 mx-auto">
+                                <p class="text-red-500 text-lg text-center font-bold">{{ Auth::user()->name }}</p>
+                            </a>
+                        </div>
                         <form action="{{ route('logout') }}" method="POST" class="inline-block">
                             @csrf
                             <button type="submit" class="text-red-500 mr-7">
