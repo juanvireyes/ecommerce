@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -11,7 +13,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        //Get superadmin role
+        $superAdminRole = Role::where('name', 'superadmin')->firstOrFail();
+
+        // Get users
+        $users = User::whereDoesntHave('roles', function($query) use($superAdminRole) {
+            $query->where('role_id', $superAdminRole->id);
+        })->latest()->paginate(12);
+
+        return view('superadmin.users', compact('users'));
     }
 
     /**
@@ -43,7 +53,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $this->authorize('update', $user);
+
+        return view('superadmin.user', compact('user'));
     }
 
     /**
@@ -51,7 +65,22 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //dd($request->all());
+
+        $user = User::findOrFail($id);
+        $this->authorize('update', $user);
+
+        $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+
+        //dd($request->all());
+
+        $user->is_active = $request->is_active;
+        $user->save();
+
+        return redirect()->route('users.edit', $user->id);
+
     }
 
     /**

@@ -19,10 +19,17 @@
             <div class="flex items-center">
                 @auth
                     <div class="ml-auto flex items-center">
+                        @if (Auth::user()->hasRole(['superadmin', 'admin']))
+                        <a href="{{ route('users.index') }}" class="text-red-500 mr-6">
+                            <img src="{{ asset('images/admindash.png') }}" class="h12 w-12 mx-auto">
+                            <p class="text-red-500 text-lg text-center font-bold">Dashboard</p>
+                        </a>
+                        @else
                         <a href="{{ route('dashboard') }}" class="text-red-500 mr-6">
                             <img src="{{ asset('images/dashboard.png') }}" class="h12 w-12 mx-auto">
                             <p class="text-red-500 text-lg text-center font-bold">Dashboard</p>
                         </a>
+                        @endif
                         <div class="inline-block mr-7">
                             <a href="{{ route('profile.edit') }}" class="text-red-500 text-lg text-center font-bold">
                                 <img src="{{ asset('images/user.png') }}" class="h-12 mx-auto">
