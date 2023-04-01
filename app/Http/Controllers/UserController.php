@@ -86,14 +86,26 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $this->authorize('update', $user);
 
-        $request->validate([
-            'is_active' => 'required|boolean'
+        $validated = $request->validate([
+            'cellphone' => 'required|string|max:40',
+            'address' => 'required|string|max:150',
+            'city' => 'string|max:80',
+            'state' => 'string|max:80',
+            'country' => 'string|max:80',
+            //'is_active' => 'required|boolean'
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         //dd($request->all());
 
-        $user->is_active = $request->is_active;
-        $user->save();
+        //$user->is_active = $request->is_active;
+        $user->update($validated);
+
+        session()->flash('success', 'El usuario ha sido actualizado correctamente.'); // This line sets a success message so it can be showed in the view when the user data is successfully updated
+
+
+        //$user->save(); // For this case, is not necessary to save the user again. The update method saves the user with the updated data
 
         return redirect()->route('users.edit', $user->id);
 
