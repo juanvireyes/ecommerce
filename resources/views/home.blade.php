@@ -30,7 +30,7 @@
             <div class="flex flex-col items-center text-center mt-6">
                 <a href="{{ route('user.dashboard') }}">
                     <img src="{{ asset('images/user-dash.png') }}" class="h-12 w-12 mx-auto mb-2">
-                    <p class="text-center text-red-500 font-m mt-2">Home del usuario</p>
+                    <p class="text-center text-red-500 text-lg font-medium mt-2">Home del usuario</p>
                 </a>
             </div>
         @endauth
