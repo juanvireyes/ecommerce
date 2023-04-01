@@ -107,7 +107,8 @@ class UserController extends Controller
 
         //$user->save(); // For this case, is not necessary to save the user again. The update method saves the user with the updated data
 
-        return redirect()->route('users.edit', $user->id);
+        return redirect()->route('users.edit', $user->id)
+            ->with('success', 'Los datos han sido actualizados exitosamente');
 
     }
 

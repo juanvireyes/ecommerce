@@ -62,9 +62,12 @@
                         <button type="submit" class="text-center text-indigo-600 hover:text-indigo-900 ml-12 font-bold">Actualizar</button>
                     </div>
                 </div>
-
-                
             </form>
+            @if (session()->has('success'))
+                <div class="alert alert success text-green-500 font-bold mt-4">
+                    {{ session('success') }}
+                </div>
+            @endif
         </div>
     @endcan
 </div>
