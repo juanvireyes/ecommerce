@@ -120,22 +120,75 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        $role = Role::where('name', 'superadmin')->first();
+        $role = Role::where('name', 'superadmin')->firstOrFail();
 
-        $seeUsers = Permission::where('name', 'see users')->first();
-        $editUsers = Permission::where('name', 'edit users')->first();
-        $createProducts = Permission::where('name', 'create products')->first();
-        $editProducts = Permission::where('name', 'edit products')->first();
-        $deleteProducts = Permission::where('name', 'delete products')->first();
-        $seePayments = Permission::where('name', 'see payments')->first();
-        $approvePayments = Permission::where('name', 'approve payments')->first();
-        $seeProducts = Permission::where('name', 'see products')->first();
+        $seeUsers = Permission::where('name', 'see users')->firstOrFail();
+        $editUsers = Permission::where('name', 'edit users')->firstOrFail();
+        $createProducts = Permission::where('name', 'create products')->firstOrFail();
+        $editProducts = Permission::where('name', 'edit products')->firstOrFail();
+        $deleteProducts = Permission::where('name', 'delete products')->firstOrFail();
+        $seePayments = Permission::where('name', 'see payments')->firstOrFail();
+        $approvePayments = Permission::where('name', 'approve payments')->firstOrFail();
+        $seeProducts = Permission::where('name', 'see products')->firstOrFail();
 
         $role->givePermissionTo($seeProducts, $seeUsers, $editUsers, $createProducts, $editProducts, $deleteProducts, $seePayments, $approvePayments);
         $user->assignRole($role);
 
         Auth::login($user);
 
-        return redirect()->route('home');
+        return redirect()->route('user.dashboard');
+    }
+
+    public function createAdmin(): View
+    {
+        return view('auth.admin-register');
+    }
+
+    public function storeAdmin (Request $request)
+    {
+        $request->validate([
+            'first_name' => ['required', 'string', 'max:80'],
+            'last_name' => ['required', 'string', 'max:80'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'cellphone' => 'required|string|max:40',
+            'address' => 'required|string|max:150',
+            'city' => 'string|max:80',
+            'state' => 'string|max:80',
+            'country' => 'string|max:80'
+        ]);
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'name' => $request->first_name . ' ' . $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'cellphone' => $request->cellphone,
+            'address' => $request->address,
+            'city' => $request->city,
+            'state' => $request->state,
+            'country' => $request->country,
+            'is_active' => true
+        ]);
+
+        //dd($user);
+
+        event(new Registered($user));
+
+        $role = Role::where('name', 'admin')->firstOrFail();
+
+        $seeUsers = Permission::where('name', 'see users')->firstOrFail();
+        $createProducts = Permission::where('name', 'create products')->firstOrFail();
+        $editProducts = Permission::where('name', 'edit products')->firstOrFail();
+        $deleteProducts = Permission::where('name', 'delete products')->firstOrFail();
+        $seeProducts = Permission::where('name', 'see products')->firstOrFail();
+
+        $role->givePermissionTo($seeProducts, $seeUsers, $createProducts, $editProducts, $deleteProducts);
+        $user->assignRole($role);
+
+        Auth::login($user);
+
+        return redirect()->route('user.dashboard');
     }
 }
