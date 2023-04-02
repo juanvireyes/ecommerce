@@ -11,15 +11,29 @@ class SuperadminController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //Get superadmin role
         $superAdminRole = Role::where('name', 'superadmin')->firstOrFail();
 
-        // Get users -> This is the query where the superadmin can retrieve the list of all users that doesn't have superadmin role.
-        $users = User::whereDoesntHave('roles', function($query) use($superAdminRole) {
+        // Includes a search term
+        $search = $request->search;
+
+        // This part saves the query for retrieve users that doesn`t have a superadmin role
+        $query = User::whereDoesntHave('roles', function($query) use($superAdminRole) {
             $query->where('role_id', $superAdminRole->id);
-        })->latest()->paginate(12);
+        });
+        
+        // Here validates if the search term has any value if don't, retrieves all users
+        if($search) {
+            $query->where(function($query) use($search){
+                $query->where('name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('email', 'LIKE', '%'.$search.'%');
+            });
+        }
+
+        // Here we optimize the query using paginate and adding other optimizations
+        $users = $query->latest()->paginate(12);
 
         // DB Query try -> Only retrieve users with al least one role. Users without roles are not retrieved
         /*$users = User::select('users.*')
