@@ -10,8 +10,9 @@
         <label for="search" class="text-red-500 text-lg font-bold mr-4">Buscar usuario</label>
         <form action="{{ route('superadmin.index') }}" method="GET">
             <input type="text" name="search" placeholder="Nombre o Email" value="{{ request('search') }}"
-            class="border border-gray-200 rounded py-2 px-4">
-            <button type="submit" class="bg-red-500 text-white text-m font-bold px-6 py-2 ml-2 rounded border">Buscar</button>
+                class="border border-gray-200 rounded py-2 px-4">
+            <button type="submit"
+                class="bg-red-500 text-white text-m font-bold px-6 py-2 ml-2 rounded border">Buscar</button>
         </form>
     </div>
     <div class="flex flex-col mt-5">
@@ -21,13 +22,16 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
                                     Nombre Usuario
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-6 py-3 text-center text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
                                     Estado
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-6 py-3 text-right text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
                                     Acciones
                                 </th>
                             </tr>
@@ -46,7 +50,8 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="{{ route('users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                        <a href="{{ route('users.edit', $user) }}"
+                                            class="text-indigo-600 hover:text-indigo-900">View</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -59,5 +64,5 @@
             </div>
         </div>
     </div>
-    
+
 @endsection

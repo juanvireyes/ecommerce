@@ -87,7 +87,6 @@ class UserController extends Controller
 
         return redirect()->route('users.edit', $user->id)
             ->with('success', 'Los datos han sido actualizados exitosamente');
-
     }
 
     /**
