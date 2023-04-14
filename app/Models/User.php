@@ -20,7 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $fillable = [ // Warning!!!->The fields of the migration that are not included in this array could generate problems with the user registration in the register form.
+    protected $fillable = [
         'first_name',
         'last_name',
         'name',
