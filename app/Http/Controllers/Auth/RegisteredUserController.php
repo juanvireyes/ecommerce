@@ -34,11 +34,12 @@ class RegisteredUserController extends Controller
     {
 
         $request->validate([
-            'first_name' => ['required', 'string', 'max:80'],
-            'last_name' => ['required', 'string', 'max:80'],
+            'first_name' => ['required', 'string', 'alpha', 'max:80'],
+            'last_name' => ['required', 'string', 'alpha', 'max:80'],
+            'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|max:40',
+            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -49,6 +50,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'name' => $request->first_name . ' ' . $request->last_name,
+            'id_numner' => $request->id_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'cellphone' => $request->cellphone,
@@ -58,8 +60,6 @@ class RegisteredUserController extends Controller
             'country' => $request->country,
             'is_active' => true
         ]);
-
-        //dd($user);
 
         event(new Registered($user));
 
@@ -93,9 +93,10 @@ class RegisteredUserController extends Controller
         $request->validate([
             'first_name' => ['required', 'string', 'max:80'],
             'last_name' => ['required', 'string', 'max:80'],
+            'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|max:40',
+            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -149,9 +150,10 @@ class RegisteredUserController extends Controller
         $request->validate([
             'first_name' => ['required', 'string', 'max:80'],
             'last_name' => ['required', 'string', 'max:80'],
+            'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|max:40',
+            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
