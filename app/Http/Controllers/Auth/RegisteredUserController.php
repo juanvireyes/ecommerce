@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('auth.user-register');
     }
 
     /**
@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
+            'cellphone' => 'required|string|digits:10',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'name' => $request->first_name . ' ' . $request->last_name,
-            'id_numner' => $request->id_number,
+            'id_number' => $request->id_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'cellphone' => $request->cellphone,
@@ -72,7 +72,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        //return redirect(RouteServiceProvider::HOME);
         return redirect()->route('user.dashboard');
     }
 
@@ -82,7 +81,8 @@ class RegisteredUserController extends Controller
 
     public function createSuperAdmin(): View
     {
-        return view('auth.saregister');
+        // return view('auth.saregister')
+        return view('auth.user-register');
     }
 
     /**
@@ -117,8 +117,6 @@ class RegisteredUserController extends Controller
             'is_active' => true
         ]);
 
-        //dd($user);
-
         event(new Registered($user));
 
         $role = Role::where('name', 'superadmin')->firstOrFail();
@@ -142,7 +140,8 @@ class RegisteredUserController extends Controller
 
     public function createAdmin(): View
     {
-        return view('auth.admin-register');
+        //return view('auth.admin-register');
+        return view('auth.user-register');
     }
 
     public function storeAdmin (Request $request)
@@ -153,7 +152,7 @@ class RegisteredUserController extends Controller
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
+            'cellphone' => 'required|string|digits:10',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -164,6 +163,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'name' => $request->first_name . ' ' . $request->last_name,
+            'id_number' => $request->id_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'cellphone' => $request->cellphone,
@@ -173,8 +173,6 @@ class RegisteredUserController extends Controller
             'country' => $request->country,
             'is_active' => true
         ]);
-
-        //dd($user);
 
         event(new Registered($user));
 

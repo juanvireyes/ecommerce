@@ -2,27 +2,31 @@
 
 namespace Tests\Feature\Auth;
 
+use Tests\TestCase;
+use Spatie\Permission\Models\Role;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_registration_screen_can_be_rendered(): void
     {
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+        $response->assertViewIs('auth.register');
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_users_can_register_as_clients(): void
     {
         $response = $this->post('/register', [
             'first_name' => 'Testing',
             'last_name' => 'User',
             'name' => 'Testing User',
+            'id_number' => '1234567890',
             'email' => 'testinguser@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
@@ -35,6 +39,6 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $response->assertRedirect('user-dashboard');
     }
 }
