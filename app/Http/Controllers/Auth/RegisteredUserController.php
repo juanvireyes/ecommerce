@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.user-register');
+        return view('userRegisterLayout');
     }
 
     /**
@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|digits:10',
+            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -82,7 +82,7 @@ class RegisteredUserController extends Controller
     public function createSuperAdmin(): View
     {
         // return view('auth.saregister')
-        return view('auth.user-register');
+        return view('userRegisterLayout');
     }
 
     /**
@@ -91,12 +91,12 @@ class RegisteredUserController extends Controller
     public function storeSuperAdmin(Request $request)
     {
         $request->validate([
-            'first_name' => ['required', 'string', 'max:80'],
-            'last_name' => ['required', 'string', 'max:80'],
+            'first_name' => ['required', 'string', 'alpha', 'max:80'],
+            'last_name' => ['required', 'string', 'alpha', 'max:80'],
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|/^[0-9]+$/|max:40',
+            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',
@@ -107,6 +107,7 @@ class RegisteredUserController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'name' => $request->first_name . ' ' . $request->last_name,
+            'id_number' => $request->id_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'cellphone' => $request->cellphone,
@@ -141,7 +142,7 @@ class RegisteredUserController extends Controller
     public function createAdmin(): View
     {
         //return view('auth.admin-register');
-        return view('auth.user-register');
+        return view('userRegisterLayout');
     }
 
     public function storeAdmin (Request $request)
@@ -152,7 +153,7 @@ class RegisteredUserController extends Controller
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|digits:10',
+            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
             'address' => 'required|string|max:150',
             'city' => 'string|max:80',
             'state' => 'string|max:80',

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
 
 class SuperadminController extends Controller
@@ -11,7 +13,31 @@ class SuperadminController extends Controller
     
     public function index(Request $request)
     {
-        $superAdminRole = Role::where('name', 'superadmin')->firstOrFail();
+        // $superAdminRole = Role::where('name', 'superadmin')->firstOrFail();
+
+        // $search = $request->search;
+
+        // $query = User::whereDoesntHave('roles', function ($query) use ($superAdminRole) {
+        //     $query->where('role_id', $superAdminRole->id);
+        // });
+
+        // if ($search) {
+        //     $query->where(function ($query) use ($search) {
+        //         $query->where('name', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('email', 'LIKE', '%' . $search . '%');
+        //     });
+        // }
+
+        $query = $this->filterUsers($request);
+
+        $users = $query->latest()->paginate(12);
+
+        return view('superadmin.users', compact('users'));
+    }
+
+    private function filterUsers(Request $request)
+    {
+        $superAdminRole = Role::where('name', 'superadmin')->first();
 
         $search = $request->search;
 
@@ -22,13 +48,11 @@ class SuperadminController extends Controller
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('email', 'LIKE', '%' . $search . '%');
+                      ->orWhere('email', 'LIKE', '%' . $search . '%');
             });
         }
-
-        $users = $query->latest()->paginate(12);
-
-        return view('superadmin.users', compact('users'));
+    
+        return $query;
     }
 
     /**

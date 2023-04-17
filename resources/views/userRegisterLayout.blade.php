@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="@yield('register-action')">
+    <form method="POST" action="{{ route('register') ? route('saregister') : route('adminregister') }}">
         @csrf
 
         <!-- First Name -->
@@ -26,7 +26,7 @@
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="id_number" :value="__('Número de identificación')" />
-            <x-text-input id="id_number" class="block mt-1 w-full" type="id_number" name="id_number" :value="old('id_number')" required autocomplete="id_number" />
+            <x-text-input id="id_number" class="block mt-1 w-full" type="text" name="id_number" :value="old('id_number')" required autocomplete="id_number" />
             <x-input-error :messages="$errors->get('id_number')" class="mt-2" />
         </div>
 
