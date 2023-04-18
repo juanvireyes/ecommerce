@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,7 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(1000)->create();
+        /**
+         * Commented this line to avoid to create users when use php artisan db:seed
+         */
+        // User::factory(1000)->create();
+        
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

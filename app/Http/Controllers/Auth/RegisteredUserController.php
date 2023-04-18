@@ -81,7 +81,6 @@ class RegisteredUserController extends Controller
 
     public function createSuperAdmin(): View
     {
-        // return view('auth.saregister')
         return view('userRegisterLayout');
     }
 
@@ -141,7 +140,6 @@ class RegisteredUserController extends Controller
 
     public function createAdmin(): View
     {
-        //return view('auth.admin-register');
         return view('userRegisterLayout');
     }
 
