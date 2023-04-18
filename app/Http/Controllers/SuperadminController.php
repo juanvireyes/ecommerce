@@ -3,30 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class SuperadminController extends Controller
 {
     
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        // $superAdminRole = Role::where('name', 'superadmin')->firstOrFail();
-
-        // $search = $request->search;
-
-        // $query = User::whereDoesntHave('roles', function ($query) use ($superAdminRole) {
-        //     $query->where('role_id', $superAdminRole->id);
-        // });
-
-        // if ($search) {
-        //     $query->where(function ($query) use ($search) {
-        //         $query->where('name', 'LIKE', '%' . $search . '%')
-        //             ->orWhere('email', 'LIKE', '%' . $search . '%');
-        //     });
-        // }
 
         $query = $this->filterUsers($request);
 
@@ -82,7 +70,7 @@ class SuperadminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): View
     {
         //
         $user = User::findOrFail($id);
@@ -95,7 +83,7 @@ class SuperadminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
        $user = User::findOrFail($id);
         $this->authorize('update', $user);
