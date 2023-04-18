@@ -42,31 +42,7 @@ class SuperadminController extends Controller
     
         return $query;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
+    
     /**
      * Show the form for editing the specified resource.
      */
@@ -104,13 +80,5 @@ class SuperadminController extends Controller
 
         return redirect()->route('users.edit', $user->id)
             ->with('success', 'Los datos han sido actualizados exitosamente');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
