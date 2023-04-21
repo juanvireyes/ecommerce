@@ -11,10 +11,11 @@ class CategoryTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_example(): void
+    public function test_categories_list_page_loads_successfully(): void
     {
-        $response = $this->get('/');
+        $response = $this->get('/categories');
 
         $response->assertStatus(200);
+        $response->assertViewIs('categories.index');
     }
 }
