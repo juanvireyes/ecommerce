@@ -62,7 +62,6 @@ class CategoryTest extends TestCase
         $this->actingAs($user);
 
         $file = UploadedFile::fake()->image('image.jpg', 100);
-        // $url = 'https://www.example.com/'.$file->name;
 
         $response = $this->post(route('category.store'), [
             'name' => 'Test Category',
@@ -73,5 +72,13 @@ class CategoryTest extends TestCase
         ]);
 
         $response->assertStatus(302);
+        $response->assertRedirect(route('categories.index'));
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Test Category',
+            'slug' => 'testcategory',
+            'description' => 'Test Description',
+            'order' => '1',
+        ]);
     }
 }

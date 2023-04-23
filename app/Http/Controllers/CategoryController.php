@@ -34,10 +34,12 @@ class CategoryController extends Controller
     public function store(Request $request): RedirectResponse
     {   
         $request->validate([
-            'name' => 'required|string|alpha|max:100',
+            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'description' => 'string|nullable',
-            'image' => 'file|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
             'order' => 'integer',
+        ],  [
+            'name.regex' => 'El nombre solo puede contener letras y espacios'
         ]);
 
         // $path = $request->file('image')->store('Categories', 'gcs');
