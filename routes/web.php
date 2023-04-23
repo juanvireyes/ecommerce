@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(fu
 Route::middleware(['auth', 'verified'])->group( function () {
     Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
     Route::post('categories/create', [CategoryController::class, 'store'])->name('category.store');
+    Route::get('categories/{category}', [CategoryController::class, 'edit'])->name('categories.edit');
 })->middleware(['can:create,App\Models\Category']);
 
 Route::get('/dashboard', function () {
