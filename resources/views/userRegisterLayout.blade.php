@@ -24,7 +24,7 @@
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
-            <!-- Email Address -->
+            <!-- Id Number -->
             <div class="mt-4">
                 <x-input-label for="id_number" :value="__('Número de identificación')" />
                 <x-text-input id="id_number" class="block mt-1 w-full" type="text" name="id_number" :value="old('id_number')" required autocomplete="id_number" />

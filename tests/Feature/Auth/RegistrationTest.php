@@ -15,7 +15,7 @@ class RegistrationTest extends TestCase
 
     public function test_registration_screen_can_be_rendered(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get(route('register'));
 
         $response->assertStatus(200);
         $response->assertViewIs('userRegisterLayout');
@@ -45,7 +45,7 @@ class RegistrationTest extends TestCase
 
     public function test_superadmin_registration_form_can_be_rendered(): void
     {
-        $response = $this->get('superadmin/register');
+        $response = $this->get(route('saregister'));
 
         $response->assertStatus(200);
         $response->assertViewIs('userRegisterLayout');
@@ -54,7 +54,7 @@ class RegistrationTest extends TestCase
     public function test_new_users_can_register_as_superadmin(): void
     {
         $role = Role::where('name', 'superadmin')->first();
-        $response = $this->post('superadmin/register', [
+        $response = $this->post(route('saregister'), [
             'first_name' => 'Superadmin',
             'last_name' => 'Test',
             'name' => 'Superadmin Test',
@@ -81,7 +81,7 @@ class RegistrationTest extends TestCase
 
     public function tests_admin_admin_registration_form_can_be_rendered(): void
     {
-        $response = $this->get('admin/register');
+        $response = $this->get(route('adminregister'));
 
         $response->assertStatus(200);
 
@@ -92,7 +92,7 @@ class RegistrationTest extends TestCase
     {
         $role = Role::where('name', 'admin')->first();
 
-        $response = $this->post('admin/register', [
+        $response = $this->post(route('adminregister'), [
             'first_name' => 'Admin',
             'last_name' => 'Test',
             'name' => 'Admin Test',

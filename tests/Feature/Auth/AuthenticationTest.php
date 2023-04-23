@@ -15,7 +15,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route('login'));
 
         $response->assertViewIs('auth.login');
     }
@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
 
         $user->assignRole($rol);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -43,7 +43,7 @@ class AuthenticationTest extends TestCase
 
         $user->assignRole($rol);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -59,7 +59,7 @@ class AuthenticationTest extends TestCase
 
         $user->assignRole($rol);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -75,7 +75,7 @@ class AuthenticationTest extends TestCase
 
         $user->assignRole($rol);
 
-        $this->post('/login', [
+        $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);

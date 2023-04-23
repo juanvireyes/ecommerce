@@ -3,35 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index(): View
     {
-        //
-        return view('categories.index');
+        $categories = Category::all();
+        return view('categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
-        //
-        return view('categories.category-form');
+        $highestOrder = Category::max('order');
+
+        $orderOptions = [];
+
+        for ($i = 0; $i <= $highestOrder; $i++) {
+            $orderOptions[$i] = $i;
+        }
+
+        return view('categories.category-form', compact('orderOptions'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request): RedirectResponse
+    {   
+        $request->validate([
+            'name' => 'required|string|alpha|max:100',
+            'description' => 'string|nullable',
+            'image' => 'file|mimes:jpeg,png,jpg|max:2048',
+            'order' => 'integer',
+        ]);
+
+        // $path = $request->file('image')->store('Categories', 'gcs');
+        // $path = Storage::disk('gcs')->put('Categories', $request->file('image'));
+        $path = $request->file('image')->store('public');
+
+        $category = Category::create([
+            'name' => $request->name,
+            'slug' => Str::of($request->name)->slug(''),
+            'description' => $request->description,
+            'image' => $path,
+            'order' => $request->order,
+        ]);
+
+        $category->save();
+
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -48,6 +71,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         //
+
     }
 
     /**
