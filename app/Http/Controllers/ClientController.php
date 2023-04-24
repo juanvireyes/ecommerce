@@ -15,10 +15,6 @@ class ClientController extends Controller
     {
         $categories = $this->getCategories();
 
-        // $categories = Category::all()->sortBy('order');
-
-        // dd($categories);
-
         return view('clients.categories',  ['categories'=> $categories]);
     }
 
