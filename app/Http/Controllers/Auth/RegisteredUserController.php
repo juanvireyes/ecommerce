@@ -34,8 +34,8 @@ class RegisteredUserController extends Controller
     {
 
         $request->validate([
-            'first_name' => ['required', 'string', 'alpha', 'max:80'],
-            'last_name' => ['required', 'string', 'alpha', 'max:80'],
+            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
+            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -44,6 +44,10 @@ class RegisteredUserController extends Controller
             'city' => 'string|max:80',
             'state' => 'string|max:80',
             'country' => 'string|max:80'
+        ], [
+            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
+            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
+            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
         ]);
 
         $user = User::create([
@@ -90,8 +94,8 @@ class RegisteredUserController extends Controller
     public function storeSuperAdmin(Request $request)
     {
         $request->validate([
-            'first_name' => ['required', 'string', 'alpha', 'max:80'],
-            'last_name' => ['required', 'string', 'alpha', 'max:80'],
+            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
+            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -100,6 +104,10 @@ class RegisteredUserController extends Controller
             'city' => 'string|max:80',
             'state' => 'string|max:80',
             'country' => 'string|max:80'
+        ],  [
+            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
+            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
+            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
         ]);
 
         $user = User::create([
@@ -146,8 +154,8 @@ class RegisteredUserController extends Controller
     public function storeAdmin (Request $request)
     {
         $request->validate([
-            'first_name' => ['required', 'string', 'max:80'],
-            'last_name' => ['required', 'string', 'max:80'],
+            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
+            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
             'id_number' => 'required|string|max:12',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -156,6 +164,10 @@ class RegisteredUserController extends Controller
             'city' => 'string|max:80',
             'state' => 'string|max:80',
             'country' => 'string|max:80'
+        ], [
+            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
+            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
+            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
         ]);
 
         $user = User::create([

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
@@ -14,21 +15,13 @@ class CategoryController extends Controller
     
     public function index(): View
     {
-        $categories = Category::all();
+        $categories = DB::table('categories')->orderBy('order')->limit(10)->get();
         return view('categories.index', compact('categories'));
     }
 
     public function create(): View
     {
-        $highestOrder = Category::max('order');
-
-        $orderOptions = [];
-
-        for ($i = 0; $i <= $highestOrder; $i++) {
-            $orderOptions[$i] = $i;
-        }
-
-        return view('categories.category-form', compact('orderOptions'));
+        return view('categories.category-form');
     }
 
     public function store(Request $request): RedirectResponse
@@ -85,7 +78,39 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $category->find($category->id);
+
+        $this->authorize('update', $category);
+
+        $request->validate([
+            'name' => ['string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'description' => 'string|nullable',
+            'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
+            'order' => 'integer',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('public');
+
+            $category->update([
+                'name' => $request->name,
+                'slug' => Str::of($request->name)->slug(''),
+                'description' => $request->description,
+                'image' => $path,
+                'order' => $request->order,
+            ]);
+        };
+
+        $category->update([
+            'name' => $request->name,
+            'slug' => Str::of($request->name)->slug(''),
+            'description' => $request->description,
+            'order' => $request->order,
+        ]);
+
+        session()->flash('success', 'Categoría actualizada correctamente');
+
+        return redirect()->route('categories.edit', $category->id)->with('success', 'Categoría actualizada correctamente');
     }
 
     /**

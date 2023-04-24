@@ -41,7 +41,7 @@
                             <td class="border border-slate-300 py-4">
                                 {{ $category->name }}
                             </td>
-                            <td class="border border-slate-300 py-4">
+                            <td class="border border-slate-300 py-4 px-2">
                                 {{ $category->description }}
                             </td>
                             <td class="border border-slate-300 py-4">
@@ -49,10 +49,10 @@
                             </td>
                             <td class="border border-slate-300 py-4">
                                 <div class="flex justify-items-center">
-                                    <div class="mx-auto">
-                                        <a href="#" class="bg-blue-500 text-white text-sm font-bold rounded-full px-4 py-1">Editar</a>
+                                    <div class="mx-auto py-2 px-2">
+                                        <a href="{{ route('categories.edit', $category->id) }}" class="bg-blue-500 text-white text-sm font-bold rounded-full px-4 py-1">Editar</a>
                                     </div>
-                                    <div class="mx-auto">
+                                    <div class="mx-auto py-2 px-2">
                                         <a href="#" 
                                         class="bg-yellow-300 hover:bg-black text-black hover:text-white font-bold text-sm font-bold rounded-full px-4 py-1">
                                             Eliminar

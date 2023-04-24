@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug', 100)->unique();
             $table->text('description')->nullable();
             $table->string('image', 255)->nullable();
-            $table->unsignedBigInteger('order')->default(0);
+            $table->unsignedBigInteger('order')->unique();
             $table->timestamps();
         });
     }

@@ -52,6 +52,21 @@ class CategoryTest extends TestCase
         $response->assertViewIs('categories.category-form');
     }
 
+    public function test_user_cant_see_create_category_page_as_client(): void
+    {
+        $user = User::where('email', 'amy.kertzmann@example.org')->first();
+
+        $role = Role::where('name', 'client')->first();
+
+        $this->assertTrue($user->hasRole($role->name));
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('categories.create'));
+        $response->assertStatus(200);
+        // $response->assertViewIs('errors.404');
+    }
+
     public function test_user_can_create_category_as_admin(): void
     {
         $user = User::where('email', 'admin@mail.com')->first();
