@@ -30,9 +30,10 @@ class CategoryController extends Controller
             'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'description' => 'string|nullable',
             'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer',
+            'order' => 'integer|unique:categories,order',
         ],  [
-            'name.regex' => 'El nombre solo puede contener letras y espacios'
+            'name.regex' => 'El nombre solo puede contener letras y espacios',
+            'order.unique' => 'El orden en el display que quieres asignar ya está ocupado'
         ]);
 
         // $path = $request->file('image')->store('Categories', 'gcs');
@@ -86,7 +87,7 @@ class CategoryController extends Controller
             'name' => ['string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'description' => 'string|nullable',
             'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer',
+            'order' => 'integer|unique:categories,order',
         ]);
 
         if ($request->hasFile('image')) {

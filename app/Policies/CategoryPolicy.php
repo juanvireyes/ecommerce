@@ -9,7 +9,16 @@ use Illuminate\Auth\Access\Response;
 
 class CategoryPolicy
 {
-    
+    public function viewAny(User $user): bool
+    {
+        return $user->hasRole(['superadmin', 'admin']);
+    }
+
+    public function view(User $user, Category $category): bool
+    {
+        return $user->hasRole(['superadmin', 'admin']);
+    }
+
     public function create(User $user, Category $category): bool
     {
         //
