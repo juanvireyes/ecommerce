@@ -14,14 +14,16 @@
             Buscar</button>
         </form>
     </div>
-    <div class="flex justify-center mx-auto gap-1">
+    <div class="grid grid-cols-4 justify-center mx-auto gap-1 justify-center items-center">
     @foreach ($filtered_categories as $category)
-        <div class="mx-auto px-4 py-2 mt-2">
-            <img src="{{ asset(Storage::url($category['image'])) }}" 
-            alt="{{ $category['name'] }}"
-            class="w-48 h-auto text-center">
-            <p class="text-center text-red-500 text-medium font-semibold mt-2 mx-auto">{{ $category['name'] }}</p>
-        </div>
+        <a href="#">
+            <div class="mx-auto px-8 py-12 mt-2 mb-4 w-64 h-64 rounded-full shadow-xl flex flex-col justify-center items-center gap-1 hover:bg-sky-100">
+                <img src="{{ asset(Storage::url($category['image'])) }}" 
+                alt="{{ $category['name'] }}"
+                class="w-1/2 h-auto text-center items-center">
+                <p class="text-center text-red-500 text-medium font-semibold mt-2 mx-auto">{{ $category['name'] }}</p>
+            </div>
+        </a>
     @endforeach
     </div>
 @endsection
