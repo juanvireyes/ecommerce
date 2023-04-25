@@ -2,14 +2,16 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('user/info', 'userInfo')->name('user.info');
+});
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');
