@@ -69,8 +69,7 @@
                         <input type="number" 
                         name="order" 
                         id="order"
-                        min="0"
-                        value="{{ $category->order }}" 
+                        min="0" 
                         class="w-1/4 text-red-500 font-bold" 
                         required>
                     </div>
