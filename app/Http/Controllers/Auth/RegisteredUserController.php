@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -30,53 +31,30 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request):  RedirectResponse
     {
 
-        $request->validate([
-            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'id_number' => 'required|string|max:12',
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
-            'address' => 'required|string|max:150',
-            'city' => 'string|max:80',
-            'state' => 'string|max:80',
-            'country' => 'string|max:80'
-        ], [
-            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
-            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
-            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
-        ]);
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'id_number' => $request->id_number,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'cellphone' => $request->cellphone,
-            'address' => $request->address,
-            'city' => $request->city,
-            'state' => $request->state,
-            'country' => $request->country,
-            'is_active' => true
-        ]);
+        $validatedData = $request->validated();
+        $validatedData['name'] = $validatedData['first_name'] . ' ' . $validatedData['last_name'];
+        $validatedData['password'] = Hash::make($validatedData['password']);
+     
+        $user = User::create($validatedData);
 
         event(new Registered($user));
 
-        $role = Role::where('name', 'client')->first();
-        $seeProducts = Permission::where('name', 'see products')->first();
-        $editCart = Permission::where('name', 'edit shopping cart');
-
-        $role->givePermissionTo($seeProducts, $editCart);
-        $user->assignRole($role);
+        $this->assignRolesAndPermissions($user, 'client', ['see products', 'edit shopping cart']);
 
         Auth::login($user);
 
         return redirect()->route('user.dashboard');
+    }
+
+    private function assignRolesAndPermissions(User $user, string $role, array $permissions): void
+    {
+        $role = Role::where('name', $role)->first();
+        $permissions = Permission::whereIn('name', $permissions)->get();
+        $role->givePermissionTo($permissions);
+        $user->assignRole($role);
     }
 
     /**
@@ -91,55 +69,17 @@ class RegisteredUserController extends Controller
     /**
      * Register new superadmin
      */
-    public function storeSuperAdmin(Request $request)
+    public function storeSuperAdmin(Request $request):  RedirectResponse
     {
-        $request->validate([
-            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'id_number' => 'required|string|max:12',
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
-            'address' => 'required|string|max:150',
-            'city' => 'string|max:80',
-            'state' => 'string|max:80',
-            'country' => 'string|max:80'
-        ],  [
-            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
-            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
-            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
-        ]);
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'id_number' => $request->id_number,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'cellphone' => $request->cellphone,
-            'address' => $request->address,
-            'city' => $request->city,
-            'state' => $request->state,
-            'country' => $request->country,
-            'is_active' => true
-        ]);
+        $validatedData = $request->validated();
+        $validatedData['name'] = $validatedData['first_name'] . ' ' . $validatedData['last_name'];
+        $validatedData['password'] = Hash::make($validatedData['password']);
+     
+        $user = User::create($validatedData);
 
         event(new Registered($user));
 
-        $role = Role::where('name', 'superadmin')->firstOrFail();
-
-        $seeUsers = Permission::where('name', 'see users')->firstOrFail();
-        $editUsers = Permission::where('name', 'edit users')->firstOrFail();
-        $createProducts = Permission::where('name', 'create products')->firstOrFail();
-        $editProducts = Permission::where('name', 'edit products')->firstOrFail();
-        $deleteProducts = Permission::where('name', 'delete products')->firstOrFail();
-        $seePayments = Permission::where('name', 'see payments')->firstOrFail();
-        $approvePayments = Permission::where('name', 'approve payments')->firstOrFail();
-        $seeProducts = Permission::where('name', 'see products')->firstOrFail();
-
-        $role->givePermissionTo($seeProducts, $seeUsers, $editUsers, $createProducts, $editProducts, $deleteProducts, $seePayments, $approvePayments);
-        $user->assignRole($role);
+        $this->assignRolesAndPermissions($user, 'superadmin', ['see users', 'edit users', 'see products', 'edit products', 'delete products', 'see payments', 'approve payments']);
 
         Auth::login($user);
 
@@ -151,52 +91,17 @@ class RegisteredUserController extends Controller
         return view('userRegisterLayout');
     }
 
-    public function storeAdmin (Request $request)
+    public function storeAdmin (Request $request):  RedirectResponse
     {
-        $request->validate([
-            'first_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'last_name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:80'],
-            'id_number' => 'required|string|max:12',
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cellphone' => 'required|string|regex:/^[+0-9\-]{10,15}$/',
-            'address' => 'required|string|max:150',
-            'city' => 'string|max:80',
-            'state' => 'string|max:80',
-            'country' => 'string|max:80'
-        ], [
-            'first_name.regex' => 'Los nombres sólo pueden contener letras y espacios',
-            'last_name.regex' => 'Los apellidos sólo pueden contener letras y espacios',
-            'cellphone.regex' => 'El número de celular solo puede contener números y guiones y debe tener entre 10 y 15 caracteres',
-        ]);
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'name' => $request->first_name . ' ' . $request->last_name,
-            'id_number' => $request->id_number,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'cellphone' => $request->cellphone,
-            'address' => $request->address,
-            'city' => $request->city,
-            'state' => $request->state,
-            'country' => $request->country,
-            'is_active' => true
-        ]);
+        $validatedData = $request->validated();
+        $validatedData['name'] = $validatedData['first_name'] . ' ' . $validatedData['last_name'];
+        $validatedData['password'] = Hash::make($validatedData['password']);
+     
+        $user = User::create($validatedData);
 
         event(new Registered($user));
 
-        $role = Role::where('name', 'admin')->firstOrFail();
-
-        $seeUsers = Permission::where('name', 'see users')->firstOrFail();
-        $createProducts = Permission::where('name', 'create products')->firstOrFail();
-        $editProducts = Permission::where('name', 'edit products')->firstOrFail();
-        $deleteProducts = Permission::where('name', 'delete products')->firstOrFail();
-        $seeProducts = Permission::where('name', 'see products')->firstOrFail();
-
-        $role->givePermissionTo($seeProducts, $seeUsers, $createProducts, $editProducts, $deleteProducts);
-        $user->assignRole($role);
+        $this->assignRolesAndPermissions($user, 'admin', ['see users', 'see products', 'edit products', 'delete products', 'see payments', 'approve payments']);
 
         Auth::login($user);
 
