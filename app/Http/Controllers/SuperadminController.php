@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SuperadminUpdateUser;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class SuperadminController extends Controller
 {
@@ -23,7 +25,7 @@ class SuperadminController extends Controller
         return view('superadmin.users', compact('users'));
     }
 
-    private function filterUsers(Request $request)
+    private function filterUsers(Request $request): EloquentBuilder
     {
         $superAdminRole = Role::where('name', 'superadmin')->first();
 
@@ -59,18 +61,12 @@ class SuperadminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(SuperadminUpdateUser $request, string $id): RedirectResponse
     {
-       $user = User::findOrFail($id);
+        $user = User::findOrFail($id);
         $this->authorize('update', $user);
 
-        $validated = $request->validate([
-            'cellphone' => 'required|string|max:40',
-            'address' => 'required|string|max:150',
-            'city' => 'string|max:80',
-            'state' => 'string|max:80',
-            'country' => 'string|max:80',
-        ]);
+        $validated = $request->validated();
 
         $validated['is_active'] = $request->has('is_active');
 
