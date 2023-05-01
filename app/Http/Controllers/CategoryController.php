@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -24,29 +26,23 @@ class CategoryController extends Controller
         return view('categories.category-form');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCategoryRequest $request): RedirectResponse
     {   
-        $request->validate([
-            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'description' => 'string|nullable',
-            'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer|unique:categories,order',
-        ],  [
-            'name.regex' => 'El nombre solo puede contener letras y espacios',
-            'order.unique' => 'El orden en el display que quieres asignar ya está ocupado'
-        ]);
+        $validated = $request->validated();
+        $validated['slug'] = Str::of($request->name)->slug('-');
 
         // $path = $request->file('image')->store('Categories', 'gcs');
         // $path = Storage::disk('gcs')->put('Categories', $request->file('image'));
-        $path = $request->file('image')->store('public');
+        if ($request->hasFile('image')) {
+            if  (!$request->file('image')->isValid()) {
+                return redirect()->back()->withErrors($request->validator());
+            };
 
-        $category = Category::create([
-            'name' => $request->name,
-            'slug' => Str::of($request->name)->slug(''),
-            'description' => $request->description,
-            'image' => $path,
-            'order' => $request->order,
-        ]);
+            $validated['image'] = $request->file('image')->store('public');
+
+        };
+
+        $category = Category::create($validated);
 
         $category->save();
 
