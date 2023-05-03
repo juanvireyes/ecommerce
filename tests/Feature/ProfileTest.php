@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
@@ -14,7 +15,8 @@ class ProfileTest extends TestCase
 
     public function test_profile_page_is_displayed(): void
     {
-        $role = Role::create(['name' => 'client']);
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client');
         $user = User::factory()->create();
     
 
@@ -27,14 +29,22 @@ class ProfileTest extends TestCase
 
     public function test_profile_information_can_be_updated(): void
     {
-        $role = Role::create(['name' => 'client']);
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
+                'first_name' => 'Test',
+                'last_name' => 'User',
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'cellphone' => '+61412345678',
+                'address' => 'Fake Street 123',
+                'city' => 'Sydney',
+                'state' => 'Something',
+                'country' => 'Australia',
             ]);
 
         $response
@@ -50,13 +60,22 @@ class ProfileTest extends TestCase
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
+                'first_name' => 'Test',
+                'last_name' => 'User',
                 'name' => 'Test User',
                 'email' => $user->email,
+                'cellphone' => '+61412345678',
+                'address' => 'Fake Street 123',
+                'city' => 'Sydney',
+                'state' => 'Something',
+                'country' => 'Australia',
             ]);
 
         $response
@@ -68,6 +87,8 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_their_account(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
@@ -86,6 +107,8 @@ class ProfileTest extends TestCase
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
