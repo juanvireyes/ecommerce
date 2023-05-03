@@ -69,7 +69,7 @@ class RegisteredUserController extends Controller
     /**
      * Register new superadmin
      */
-    public function storeSuperAdmin(Request $request):  RedirectResponse
+    public function storeSuperAdmin(StoreUserRequest $request):  RedirectResponse
     {
         $validatedData = $request->validated();
         $validatedData['name'] = $validatedData['first_name'] . ' ' . $validatedData['last_name'];
@@ -91,7 +91,7 @@ class RegisteredUserController extends Controller
         return view('userRegisterLayout');
     }
 
-    public function storeAdmin (Request $request):  RedirectResponse
+    public function storeAdmin (StoreUserRequest $request):  RedirectResponse
     {
         $validatedData = $request->validated();
         $validatedData['name'] = $validatedData['first_name'] . ' ' . $validatedData['last_name'];

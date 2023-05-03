@@ -6,12 +6,14 @@ use Tests\TestCase;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use App\Providers\RouteServiceProvider;
+use Database\Seeders\PermissionsSeeder;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RegistrationTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_registration_screen_can_be_rendered(): void
     {
@@ -23,6 +25,10 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_as_clients(): void
     {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+        $role = Role::where('name', 'client')->first();
+
         $response = $this->post('/register', [
             'first_name' => 'Testing',
             'last_name' => 'User',
@@ -41,6 +47,9 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect('user-dashboard');
+
+        $user = User::where('email', 'testinguser@example.com')->first();
+        $this->assertTrue($user->hasRole($role->name));
     }
 
     public function test_superadmin_registration_form_can_be_rendered(): void
@@ -53,6 +62,8 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_as_superadmin(): void
     {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
         $role = Role::where('name', 'superadmin')->first();
         $response = $this->post(route('saregister'), [
             'first_name' => 'Superadmin',
@@ -90,6 +101,8 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_as_admin(): void
     {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
         $role = Role::where('name', 'admin')->first();
 
         $response = $this->post(route('adminregister'), [

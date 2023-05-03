@@ -5,15 +5,18 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_profile_page_is_displayed(): void
     {
+        $role = Role::create(['name' => 'client']);
         $user = User::factory()->create();
+    
 
         $response = $this
             ->actingAs($user)
@@ -24,6 +27,7 @@ class ProfileTest extends TestCase
 
     public function test_profile_information_can_be_updated(): void
     {
+        $role = Role::create(['name' => 'client']);
         $user = User::factory()->create();
 
         $response = $this

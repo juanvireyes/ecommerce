@@ -6,25 +6,28 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Routing\Route;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Http\UploadedFile;
 use Spatie\Permission\Models\Role;
-
+use Database\Seeders\PermissionsSeeder;
 use function PHPUnit\Framework\assertTrue;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CategoryTest extends TestCase
 {
-    use DatabaseTransactions;
-    /**
-     * A basic feature test example.
-     */
+    use RefreshDatabase;
+    
     public function test_categories_list_page_loads_successfully_for_admin(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'admin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
 
@@ -38,9 +41,13 @@ class CategoryTest extends TestCase
 
     public function test_categories_list_page_loads_successfully_for_superadmin(): void
     {
-        $user = User::where('email', 'superadmin@mail.com')->first();
-
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+        
         $role = Role::where('name', 'superadmin')->first();
+
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
 
@@ -54,9 +61,13 @@ class CategoryTest extends TestCase
 
     public function test_user_can_see_create_category_page_as_admin(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'admin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
 
@@ -70,9 +81,13 @@ class CategoryTest extends TestCase
 
     public function test_user_can_see_category_page_as_superadmin(): void
     {
-        $user = User::where('email', 'superadmin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'superadmin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
 
@@ -86,9 +101,12 @@ class CategoryTest extends TestCase
 
     public function test_user_cant_see_create_category_page_as_client(): void
     {
-        $user = User::where('email', 'amy.kertzmann@example.org')->first();
-
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
         $role = Role::where('name', 'client')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
 
@@ -100,9 +118,13 @@ class CategoryTest extends TestCase
 
     public function test_user_can_create_category_as_admin(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'admin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
         $this->actingAs($user);
@@ -130,9 +152,12 @@ class CategoryTest extends TestCase
 
     public function test_user_can_create_category_as_superadmin(): void
     {
-        $user = User::where('email', 'superadmin@mail.com')->first();
-
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
         $role = Role::where('name', 'superadmin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
         $this->actingAs($user);
@@ -160,9 +185,13 @@ class CategoryTest extends TestCase
 
     public function test_category_cant_be_created_without_name(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'admin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
         $this->actingAs($user);
@@ -183,9 +212,13 @@ class CategoryTest extends TestCase
 
     public function test_category_cant_be_created_with_non_accepted_image_format(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
 
         $role = Role::where('name', 'admin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
         $this->actingAs($user);
@@ -206,9 +239,12 @@ class CategoryTest extends TestCase
 
     public function test_category_can_be_created_without_image(): void
     {
-        $user = User::where('email', 'admin@mail.com')->first();
-
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
         $role = Role::where('name', 'admin')->first();
+        
+        $user = User::factory()->create();
+        $user->assignRole($role);
 
         $this->assertTrue($user->hasRole($role->name));
         $this->actingAs($user);
