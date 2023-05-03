@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
 use App\Models\User;
+use Database\Seeders\RolesSeeder;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
@@ -17,6 +19,8 @@ class EmailVerificationTest extends TestCase
 
     public function test_email_verification_screen_can_be_rendered(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client')->first();
         $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
@@ -28,6 +32,8 @@ class EmailVerificationTest extends TestCase
 
     public function test_email_can_be_verified(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client')->first();
         $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
@@ -49,6 +55,8 @@ class EmailVerificationTest extends TestCase
 
     public function test_email_is_not_verified_with_invalid_hash(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client')->first();
         $user = User::factory()->create([
             'email_verified_at' => null,
         ]);

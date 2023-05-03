@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
 use App\Models\User;
+use Database\Seeders\RolesSeeder;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -14,6 +16,8 @@ class PasswordUpdateTest extends TestCase
 
     public function test_password_can_be_updated(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client')->first();
         $user = User::factory()->create();
 
         $response = $this
@@ -34,6 +38,8 @@ class PasswordUpdateTest extends TestCase
 
     public function test_correct_password_must_be_provided_to_update_password(): void
     {
+        $this->seed(RolesSeeder::class);
+        $role = Role::where('name', 'client')->first();
         $user = User::factory()->create();
 
         $response = $this
