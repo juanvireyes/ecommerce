@@ -291,4 +291,26 @@ class CategoryTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect(route('categories.index'));
     }
+
+    public function test_category_can_be_deleted_as_superadmin(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+        $role = Role::where('name', 'superadmin')->first();
+
+        $user = User::factory()->create();
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role->name));
+        $this->actingAs($user);
+
+        $category = Category::factory()->create();
+
+        $response = $this->delete(route('categories.destroy', $category->id));
+
+        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('categories.index'));
+    }
 }
