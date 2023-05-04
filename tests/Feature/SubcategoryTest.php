@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use Tests\TestCase;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
@@ -136,12 +137,25 @@ class SubcategoryTest extends TestCase
         $this->actingAs($user);
 
         $file = UploadedFile::fake()->image('image.jpg');
-        $response = $this->post(route('subcategories.store'), [
-            'name' => 'test',
-            'category_id' => 1,
+        $category = Category::factory()->create();
+        $response = $this->post(route('subcategory.store'), [
+            'name' => 'Test Subcategory',
+            'slug' => 'test-subcategory',
             'description' => 'test',
             'image' => $file,
-            'order' => 1
+            'order' => 1,
+            'category_id' => $category->id,
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('subcategories.index'));
+
+        $this->assertDatabaseHas('subcategories', [
+            'name' => 'Test Subcategory',
+            'slug' => 'test-subcategory',
+            'description' => 'test',
+            'order' => 1,
+            'category_id' => $category->id,
         ]);
     }
 }
