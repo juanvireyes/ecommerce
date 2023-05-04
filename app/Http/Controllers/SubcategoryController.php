@@ -7,6 +7,8 @@ use Illuminate\View\View;
 use App\Models\Subcategory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\StoreSubcategoryRequest;
 
 class SubcategoryController extends Controller
@@ -28,7 +30,7 @@ class SubcategoryController extends Controller
     }
 
     
-    public function store(StoreSubcategoryRequest $request)
+    public function store(StoreSubcategoryRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $validated['slug'] = Str::of($validated['name'])->slug('-');
