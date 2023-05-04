@@ -8,9 +8,6 @@ use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function () {
-    return view('prod-man-template');
-});
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
