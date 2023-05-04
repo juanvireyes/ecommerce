@@ -48,7 +48,7 @@ class CategoryController extends Controller
     }
 
     
-    public function edit(Category $category)
+    public function edit(Category $category): View
     {
         $category->find($category->id);
 
@@ -57,24 +57,16 @@ class CategoryController extends Controller
         return view('categories.edit-category', compact('category'));
     }
 
-    public function update(StoreCategoryRequest $request, Category $category)
+    public function update(StoreCategoryRequest $request, Category $category): RedirectResponse
     {
         $category->find($category->id);
 
         $this->authorize('update', $category);
 
-        // $request->validate([
-        //     'name' => ['string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-        //     'description' => 'string|nullable',
-        //     'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-        //     'order' => 'integer|unique:categories,order',
-        // ]);
-
         $request->validated();
         $validated['slug'] = Str::of($request->name)->slug('-');
 
         if ($request->hasFile('image')) {
-            // $path = $request->file('image')->store('public');
             $validated['image'] = $request->file('image')->store('public');
 
             $category->update($validated);
@@ -87,7 +79,7 @@ class CategoryController extends Controller
         return redirect()->route('categories.edit', $category->id)->with('success', 'Categoría actualizada correctamente');
     }
 
-    public function destroy(Category $category)
+    public function destroy(Category $category): RedirectResponse
     {
         $category->find($category->id);
 
