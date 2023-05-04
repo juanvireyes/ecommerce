@@ -31,8 +31,6 @@ class CategoryController extends Controller
         $validated = $request->validated();
         $validated['slug'] = Str::of($request->name)->slug('-');
 
-        // $path = $request->file('image')->store('Categories', 'gcs');
-        // $path = Storage::disk('gcs')->put('Categories', $request->file('image'));
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
                 return redirect()->back()->withErrors($request->validator());
@@ -49,20 +47,9 @@ class CategoryController extends Controller
         return redirect()->route('categories.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(Category $category)
     {
-        //
         $category->find($category->id);
 
         $this->authorize('update', $category);
@@ -70,51 +57,42 @@ class CategoryController extends Controller
         return view('categories.edit-category', compact('category'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Category $category)
+    public function update(StoreCategoryRequest $request, Category $category)
     {
         $category->find($category->id);
 
         $this->authorize('update', $category);
 
-        $request->validate([
-            'name' => ['string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'description' => 'string|nullable',
-            'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer|unique:categories,order',
-        ]);
+        // $request->validate([
+        //     'name' => ['string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+        //     'description' => 'string|nullable',
+        //     'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
+        //     'order' => 'integer|unique:categories,order',
+        // ]);
+
+        $request->validated();
+        $validated['slug'] = Str::of($request->name)->slug('-');
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public');
+            // $path = $request->file('image')->store('public');
+            $validated['image'] = $request->file('image')->store('public');
 
-            $category->update([
-                'name' => $request->name,
-                'slug' => Str::of($request->name)->slug(''),
-                'description' => $request->description,
-                'image' => $path,
-                'order' => $request->order,
-            ]);
+            $category->update($validated);
         };
 
-        $category->update([
-            'name' => $request->name,
-            'slug' => Str::of($request->name)->slug(''),
-            'description' => $request->description,
-            'order' => $request->order,
-        ]);
+        $category->update($validated);
 
         session()->flash('success', 'Categoría actualizada correctamente');
 
         return redirect()->route('categories.edit', $category->id)->with('success', 'Categoría actualizada correctamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Category $category)
     {
-        //
+        $category->find($category->id);
+
+        $category->delete();
+
+        return redirect()->route('categories.index');
     }
 }

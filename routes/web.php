@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Category'])->grou
     Route::post('categories/create', [CategoryController::class, 'store'])->name('category.store');
     Route::get('categories/{category}', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 })->middleware(['can:create,App\Models\Category', 'can:update,App\Models\Category']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
