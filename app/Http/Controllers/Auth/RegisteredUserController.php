@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
         return redirect()->route('user.dashboard');
     }
 
-    private function assignRolesAndPermissions(User $user, string $role, array $permissions): void
+    protected function assignRolesAndPermissions(User $user, string $role, array $permissions): void
     {
         $role = Role::where('name', $role)->first();
         $permissions = Permission::whereIn('name', $permissions)->get();

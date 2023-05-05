@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\RegisteredAdminController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\RegisteredSuperadminController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -17,15 +19,15 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('superadmin/register', [RegisteredUserController::class, 'createSuperAdmin'])
+    Route::get('superadmin/register', [RegisteredSuperadminController::class, 'create'])
         ->name('saregister');
 
-    Route::post('superadmin/register', [RegisteredUserController::class, 'storeSuperAdmin']);
+    Route::post('superadmin/register', [RegisteredSuperadminController::class, 'store']);
 
-    Route::get('admin/register', [RegisteredUserController::class, 'createAdmin'])
+    Route::get('admin/register', [RegisteredAdminController::class, 'create'])
         ->name('adminregister');
 
-    Route::post('admin/register', [RegisteredUserController::class, 'storeAdmin']);
+    Route::post('admin/register', [RegisteredAdminController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
