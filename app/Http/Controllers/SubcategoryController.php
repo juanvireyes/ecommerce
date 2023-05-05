@@ -10,15 +10,21 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\StoreSubcategoryRequest;
+use Illuminate\Database\Eloquent\Collection;
 
 class SubcategoryController extends Controller
 {
     
     public function index(): View
     {
-        $subcategories = Subcategory::all();
+        $subcategories = $this->getSubcategory();
 
         return view('subcategories.index', compact('subcategories'));
+    }
+
+    private function getSubcategory(): Collection
+    {
+        return Subcategory::with('category')->get();
     }
 
 
@@ -35,7 +41,7 @@ class SubcategoryController extends Controller
         $validated = $request->validated();
         $validated['slug'] = Str::of($validated['name'])->slug('-');
         $validated['category_id'] = $request->category_id;
-
+        // dd($validated);
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
                 return redirect()->back()->withErrors($request->validator());
@@ -43,6 +49,8 @@ class SubcategoryController extends Controller
 
             $validated['image'] = $request->file('image')->store('public');
         };
+
+        
 
         $subcategory = Subcategory::create($validated);
 
@@ -52,26 +60,45 @@ class SubcategoryController extends Controller
     }
 
     
-    public function show(Subcategory $subcategory)
+    public function edit(Subcategory $subcategory): View
     {
-        //
+        $subcategory->find($subcategory->id);
+
+        $categories = Category::all();
+
+        $this->authorize('update', $subcategory);
+
+        return view('subcategories.edit', compact('subcategory', 'categories'));
     }
 
     
-    public function edit(Subcategory $subcategory)
+    public function update(StoreSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
-        //
-    }
+        $subcategory->find($subcategory->id);
 
-    
-    public function update(Request $request, Subcategory $subcategory)
-    {
-        //
+        $this->authorize('update', $subcategory);
+
+        $validated = $request->validated();
+        $validated['slug'] = Str::of($validated['name'])->slug('-');
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('public');
+        };
+
+        $subcategory->update($validated);
+
+        session()->flash('success', 'Información actualizada correctamente');
+
+        return redirect()->route('subcategories.index')->with('success', 'Información actualizada correctamente');
     }
 
     
     public function destroy(Subcategory $subcategory)
     {
-        //
+        $subcategory->find($subcategory->id);
+
+        $subcategory->delete();
+
+        return redirect()->route('subcategories.index');
     }
 }
