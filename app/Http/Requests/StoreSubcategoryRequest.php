@@ -13,7 +13,7 @@ class StoreSubcategoryRequest extends FormRequest
             'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'unique:categories,name', 'max:100'],
             'description' => 'string|nullable',
             'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer|unique:categories,order',
+            'order' => 'integer|unique:subcategories,order,NULL,id',
             'category_id' => 'integer|exists:categories,id',
         ];
     }

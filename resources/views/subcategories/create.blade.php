@@ -21,11 +21,11 @@
                         autocomplete="name">
                     </label>
                 </div>
-                <div class="mt-2 text-red-700 text-lg font-bold text-center">
-                    @error('name')
+                @error('name')
+                    <div class="mt-2 text-red-700 text-lg font-bold text-center">
                         {{ $message }}
-                    @enderror
-                </div>
+                    </div>
+                @enderror
 
                 {{-- Descripción --}}
                 <div class="mt-3 mb-3 py-2">
@@ -34,10 +34,12 @@
                         class="w-1/2"
                         autocomplete="description"></textarea>
                     </label>
-                    @error('description')
-                        {{ $message }}
-                    @enderror
                 </div>
+                @error('description')
+                    <div class="mt-2 text-red-500 font-bold mx-auto">
+                        {{ $message }}
+                    </div>
+                @enderror
 
                 {{-- Order--}}
                 <div class="mt-3 mb-3 py-2">
@@ -49,11 +51,11 @@
                     class="w-1/4 text-red-500 font-bold mx-auto" 
                     required>
                 </div>
-                <div>
-                    @error('order')
+                @error('order')
+                    <div class="mt-2 text-red-700 text-lg font-bold text-center">
                         {{ $message }}
-                    @enderror
-                </div>
+                    </div>
+                @enderror
 
                 {{-- Imagen --}}
                 <div class="mt-3 mb-3 py-2">
@@ -63,23 +65,28 @@
                         <input type="file" name="image" id="image" accept=".jpg, .jpeg, .png" class="mx-1">
                     </label>
                 </div>
-                <div class="mt-2 text-red-700 text-lg font-bold text-center">
-                    @error('image')
+                @error('image')
+                    <div class="mt-2 text-red-700 text-lg font-bold text-center">
                         {{ $message }}
-                    @enderror
-                </div>
+                    </div>
+                @enderror
 
                 {{-- Categoría --}}
                 <div class="mt-3-mb-3 py-2">
                     <label for="category" class="text-red-500 text-medium font-bold">
                         Selecciona la categoría
-                        <select name="categories" id="categories" required>
+                        <select name="category_id" id="categories" required>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </label>
                 </div>
+                @error('categories')
+                    <div class="mt-2 text-red-700 text-lg font-bold text-center">
+                        {{ $message }}
+                    </div>
+                @enderror
 
                 <div class="mt-3 py-2">
                     <button type="submit" 

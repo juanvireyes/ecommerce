@@ -34,7 +34,10 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Subcategory'])->g
     Route::get('subcategories', [SubcategoryController::class, 'index'])->name('subcategories.index');
     Route::get('subcategories/create', [SubcategoryController::class, 'create'])->name('subcategories.create');
     Route::post('subcategories/create', [SubcategoryController::class, 'store'])->name('subcategory.store');
-});
+    Route::get('subcategories/{subcategory}', [SubcategoryController::class, 'edit'])->name('subcategories.edit');
+    Route::put('subcategories/{subcategory}', [SubcategoryController::class, 'update'])->name('subcategories.update');
+    Route::delete('subcategories/{subcategory}', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
+})->middleware(['can:create,App\Models\Subcategory', 'can:update,App\Models\Subcategory']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('user-dashboard', [UserController::class, 'index'])->name('user.dashboard');
