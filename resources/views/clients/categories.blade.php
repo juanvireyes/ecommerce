@@ -1,8 +1,13 @@
 @extends('clients.vitrina-template')
 
 @section('categories')
+    @section('content-name', 'Categorías')
     <div class="flex justify-center text-center">
+        @if (Auth::user())
+        <form action="{{ route('clients.index') }}" method="GET" class="mx-auto justify-center text-center">
+        @else
         <form action="{{ route('home') }}" method="GET" class="mx-auto justify-center text-center">
+        @endif
             <label for="search" 
             class="mx-auto text-red-700 text-center font-bold text-md mr-3 mb-2 py-2">Buscar categorías: </label>
             <input 
@@ -17,7 +22,7 @@
     </div>
     <div class="bg-gray-200 grid grid-cols-4 justify-center mx-auto gap-1 justify-center items-center px-4 py-6 mt-8">
     @foreach ($filtered_categories as $category)
-        <a href="#">
+        <a href="{{ route('clients.subcategories', $category['slug']) }}">
             <div class=" bg-white mx-auto px-8 py-12 mt-2 mb-4 w-64 h-64 rounded-full shadow-xl flex flex-col justify-center items-center gap-1">
                 <img src="{{ asset(Storage::url($category['image'])) }}" 
                 alt="{{ $category['name'] }}"

@@ -23,7 +23,7 @@ class HomeController extends Controller
             $filtered_categories = $this->get_categories();
         };
         
-        return view('home',  compact('filtered_categories'), compact('filter'));
+        return view('home.index',  compact('filtered_categories'), compact('filter'));
     }
 
     private function get_categories(): array
@@ -38,6 +38,24 @@ class HomeController extends Controller
         $filtered_categories = $categories->where('name', 'LIKE', '%' . $filter . '%')->get();
 
         return $filtered_categories->toArray();
+    }
+
+    public function subCategories(string $categorySlug): View
+    {
+        $category = $this->getCategoryBySlug($categorySlug);
+        $subCategories = $this->getSubCategories($category);
+
+        return view('clients.subCategories', ['subCategories' => $subCategories]);
+    }
+
+    private function getCategoryBySlug(string $slug): Category
+    {
+        return Category::where('slug', $slug)->first();
+    }
+
+    private function getSubCategories(Category $category): array
+    {
+        return $category->subCategories()->get()->sortBy('order')->toArray();
     }
 
     public function user_info(): View

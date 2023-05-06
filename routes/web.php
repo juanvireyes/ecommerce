@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\ClientSubcategoryController;
 
 
 Route::controller(HomeController::class)->group(function () {
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
 });
 
 require __DIR__ . '/auth.php';
