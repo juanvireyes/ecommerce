@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Subcategory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -17,11 +19,7 @@ class DatabaseSeeder extends Seeder
          * Commented this line to avoid to create users when use php artisan db:seed
          */
         // User::factory(1000)->create();
-        
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        Subcategory::factory(20)->create();
     }
 }

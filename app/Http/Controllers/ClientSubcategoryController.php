@@ -16,7 +16,7 @@ class ClientSubcategoryController extends ClientController
         return view('clients.subCategories', ['subCategories' => $subCategories], compact('category'));
     }
 
-    private function getSubCategories(Category $category): array
+    protected function getSubCategories(Category $category): array
     {
         return $category->subCategories()->get()->sortBy('order')->toArray();
     }

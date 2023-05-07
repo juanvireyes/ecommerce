@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SuperadminController;
@@ -40,6 +41,14 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Subcategory'])->g
     Route::delete('subcategories/{subcategory}', [SubcategoryController::class, 'destroy'])->name('subcategories.destroy');
 })->middleware(['can:create,App\Models\Subcategory', 'can:update,App\Models\Subcategory']);
 
+Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group( function () {
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('products/create', [ProductController::class, 'store'])->name('product.store');
+    Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
+})->middleware(['can:create,App\Models\Product', 'can:update,App\Models\Product']);
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('user-dashboard', [UserController::class, 'index'])->name('user.dashboard');
 });
@@ -50,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
     Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
+    Route::get('vitrina/{category_slug}/{subcategory_slug}', [ProductController::class, 'show'])->name('clients.show');
 });
 
 require __DIR__ . '/auth.php';

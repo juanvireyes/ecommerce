@@ -15,16 +15,32 @@ use Illuminate\Database\Eloquent\Collection;
 class SubcategoryController extends Controller
 {
     
-    public function index(): View
+    public function index(Request $request): View
     {
-        $subcategories = $this->getSubcategory();
+        $categories = Category::all();
+        $categoryId = $request->categoryId;
 
-        return view('subcategories.index', compact('subcategories'));
+        if ($categoryId) {
+            $subcategories = $this->filterSubcategories($categoryId);
+        } else {
+            $subcategories = $this->getSubcategory();
+        };
+
+        return view('subcategories.index', compact('subcategories', 'categories'));
     }
 
     private function getSubcategory(): Collection
     {
-        return Subcategory::with('category')->get();
+        return Subcategory::with('category')->get()->sortBy('category_id');
+    }
+
+    private function filterSubcategories(int $id): Collection
+    {
+        $category = Category::where('id', $id)->firstOrFail();
+
+        return $this->getSubcategory()->filter(function ($subcategory) use ($category) {
+            return $subcategory->category_id == $category->id;
+        })->sortBy('order');
     }
 
 
