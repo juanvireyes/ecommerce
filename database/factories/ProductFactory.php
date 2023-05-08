@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Subcategory;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +19,17 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $subcategory_id = Subcategory::all()->random()->id;
+        $name = fake()->word() . ' ' . fake()->word() . ' ' . fake()->word();
         return [
-            //
+            'name' => $name,
+            'slug' => Str::of($name)->slug('-'),
+            'description' => fake()->sentence(),
+            'image' => 'products/add-image.png',
+            'price' => fake()->randomFloat(2, 1, 1000),
+            'stock' => fake()->numberBetween(1, 100),
+            'order' => fake()->unique()->numberBetween(53, 100),
+            'subcategory_id' => $subcategory_id,
         ];
     }
 }

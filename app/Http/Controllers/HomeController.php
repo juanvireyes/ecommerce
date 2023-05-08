@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Subcategory;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Catch_;
@@ -56,6 +57,11 @@ class HomeController extends Controller
     private function getSubCategories(Category $category): array
     {
         return $category->subCategories()->get()->sortBy('order')->toArray();
+    }
+
+    private function getProducts(Subcategory $subcategory): array
+    {
+        return $subcategory->products()->get()->sortBy('order')->toArray();
     }
 
     public function user_info(): View

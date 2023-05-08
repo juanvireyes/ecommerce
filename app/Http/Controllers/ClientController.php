@@ -25,21 +25,21 @@ class ClientController extends Controller
         return view('clients.categories', compact('filtered_categories', 'search'));
     }
 
-    protected function getCategories(): array
+    public function getCategories(): array
     {
         $categories = Category::all()->sortBy('order');
 
         return  $categories->toArray();
     }
 
-    protected function filterCategories(Builder $categories, string $search): array
+    public function filterCategories(Builder $categories, string $search): array
     {
         $filteredCategories = $categories->where('name', 'like', "%{$search}%")->get();
 
         return $filteredCategories->toArray();
     }
 
-    protected function getCategoryBySlug(string $slug): Category
+    public function getCategoryBySlug(string $slug): Category
     {
         return Category::where('slug', $slug)->first();
     }

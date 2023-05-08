@@ -6,14 +6,16 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\View\View;
 use App\Models\Subcategory;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Interfaces\CategoryInterface;
+use Illuminate\Http\RedirectResponse;
 use App\Interfaces\SubcategoryInterface;
-use App\Http\Requests\ProductFormRequest;
 use Illuminate\Database\Eloquent\Collection;
+use App\Http\Requests\StoreProductFormRequest;
+use App\Http\Requests\UpdateProductFormRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller implements CategoryInterface, SubcategoryInterface
 {
@@ -31,8 +33,6 @@ class ProductController extends Controller implements CategoryInterface, Subcate
             $subcategoryId = $request->subcategoryId;
 
             if ($subcategoryId) {
-
-                $subcategory = $this->getSubcategory($subcategoryId);
 
                 $products = $this->getProductsBySubcategory($subcategoryId);
 
@@ -79,9 +79,7 @@ class ProductController extends Controller implements CategoryInterface, Subcate
 
     private function getProductsBySubcategory(int $subcategoryId): EloquentBuilder
     {
-        $subcategoryId = Subcategory::find($subcategoryId);
-
-        return  $subcategoryId->products()->paginate(12);
+        return  Product::where('subcategory_id', $subcategoryId)->orderBy('order')->paginate(12);
     }
 
     private function getProducts(): LengthAwarePaginator
@@ -90,9 +88,6 @@ class ProductController extends Controller implements CategoryInterface, Subcate
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): View
     {
         $categories = $this->getAllCategories();
@@ -112,12 +107,11 @@ class ProductController extends Controller implements CategoryInterface, Subcate
         };
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(ProductFormRequest $request): RedirectResponse
+
+    public function store(StoreProductFormRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['slug'] = Str::of($validated['name'])->slug('-');
 
         if ($validated->hasFile('image')) {
 
@@ -126,6 +120,10 @@ class ProductController extends Controller implements CategoryInterface, Subcate
             };
 
             $validated['image'] = $request->file('image')->store('products');
+        };
+
+        if ($validated['stock'] > 0) {
+            $validated['active'] = true;
         };
 
         $product = Product::create($validated);
@@ -167,13 +165,40 @@ class ProductController extends Controller implements CategoryInterface, Subcate
         };
     }
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductFormRequest $request, Product $product): RedirectResponse
     {
-        //
+        $product = Product::find($product->id);
+
+        $this->authorize('update', $product);
+        
+        $validated = $request->validated();
+
+        if ($request->hasFile('image')) {
+
+            if  (!$request->file('image')->isValid()) {
+                return redirect()->back()->withErrors($request->validator());
+            };
+
+            $validated['image'] = $request->file('image')->store('products');
+        };
+
+        if ($validated['stock'] == 0) {
+            $validated['active'] = false;
+        } else {
+            $validated['active'] = true;
+        };
+
+        $product->update($validated);
+
+        return redirect()->route('products.index', compact('categories', 'categoryId', 'products'));
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
-        //
+        $product = Product::find($product->id);
+
+        $product->delete();
+
+        return  redirect()->route('products.index');
     }
 }

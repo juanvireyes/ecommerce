@@ -11,7 +11,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <form action="" method="POST" enctype="multipart/form-data" class="mx-auto mt-3 py-3">
+                <form action="{{ route('subcategories.update', $subcategory->id) }}" method="POST" enctype="multipart/form-data" class="mx-auto mt-3 py-3">
                     @csrf
                     @method('PUT')
 

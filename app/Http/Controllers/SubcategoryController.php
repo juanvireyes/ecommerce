@@ -9,8 +9,9 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\StoreSubcategoryRequest;
 use Illuminate\Database\Eloquent\Collection;
+use App\Http\Requests\StoreSubcategoryRequest;
+use App\Http\Requests\UpdateSubcategoryRequest;
 
 class SubcategoryController extends Controller
 {
@@ -88,7 +89,7 @@ class SubcategoryController extends Controller
     }
 
     
-    public function update(StoreSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
+    public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
         $subcategory->find($subcategory->id);
 

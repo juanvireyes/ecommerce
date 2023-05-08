@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ClientSubcategoryController;
 
 
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group
     Route::post('products/create', [ProductController::class, 'store'])->name('product.store');
     Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 })->middleware(['can:create,App\Models\Product', 'can:update,App\Models\Product']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -59,7 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
     Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
-    Route::get('vitrina/{category_slug}/{subcategory_slug}', [ProductController::class, 'show'])->name('clients.show');
+    Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
+    Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
 });
 
 require __DIR__ . '/auth.php';

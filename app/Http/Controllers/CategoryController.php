@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
@@ -11,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -57,19 +58,19 @@ class CategoryController extends Controller
         return view('categories.edit-category', compact('category'));
     }
 
-    public function update(StoreCategoryRequest $request, Category $category): RedirectResponse
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
         $category->find($category->id);
 
         $this->authorize('update', $category);
 
-        $request->validated();
+        $validated = $request->validated();
         $validated['slug'] = Str::of($request->name)->slug('-');
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('public');
 
-            $category->update($validated);
+            // $category->update($validated);
         };
 
         $category->update($validated);

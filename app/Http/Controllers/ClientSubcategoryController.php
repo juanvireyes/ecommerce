@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Models\Subcategory;
 
 class ClientSubcategoryController extends ClientController
 {
@@ -19,6 +20,11 @@ class ClientSubcategoryController extends ClientController
     protected function getSubCategories(Category $category): array
     {
         return $category->subCategories()->get()->sortBy('order')->toArray();
+    }
+
+    protected function getSubcategoryBySlug(string $slug): Subcategory
+    {
+        return Subcategory::where('slug', $slug)->first();
     }
 
 }

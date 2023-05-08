@@ -128,7 +128,7 @@
                             <td class="border border-slate-300 py-4 px-2">
                                 <a href="{{ route('subcategories.index') }}" 
                                     class="text-gray-700 hover:text-red-500 text-sm font-bold">
-                                    {{ $subcategory->name }}
+                                    {{ $product->subcategory->name }}
                                 </a>
                             </td>
                             <td class="border border-slate-300 py-4">
@@ -154,7 +154,7 @@
             </table>
         </div>
         <div>
-            {{-- {{ $products->links() }} --}}
+            {{ $products->links() }}
         </div>
     </div>
 

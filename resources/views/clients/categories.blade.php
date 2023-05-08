@@ -22,7 +22,7 @@
     </div>
     <div class="bg-gray-200 grid grid-cols-4 justify-center mx-auto gap-1 justify-center items-center px-4 py-6 mt-8">
     @foreach ($filtered_categories as $category)
-        <a href="{{ route('clients.subcategories', $category['slug']) }}">
+        <a href="{{ route('clients.subcategories', ['category_slug' => $category['slug']]) }}">
             <div class=" bg-white mx-auto px-8 py-12 mt-2 mb-4 w-64 h-64 rounded-full shadow-xl flex flex-col justify-center items-center gap-1">
                 <img src="{{ asset(Storage::url($category['image'])) }}" 
                 alt="{{ $category['name'] }}"
