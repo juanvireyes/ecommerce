@@ -13,6 +13,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'slug', //No aplica para la segunda entrega->Fuera de tiempo.
         'description',
         'image',
         'price',

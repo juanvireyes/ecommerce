@@ -113,7 +113,7 @@ class ProductController extends Controller implements CategoryInterface, Subcate
         $validated = $request->validated();
         $validated['slug'] = Str::of($validated['name'])->slug('-');
 
-        if ($validated->hasFile('image')) {
+        if ($request->hasFile('image')) {
 
             if  (!$request->file('image')->isValid()) {
                 return redirect()->back()->withErrors($request->validator());
@@ -190,7 +190,7 @@ class ProductController extends Controller implements CategoryInterface, Subcate
 
         $product->update($validated);
 
-        return redirect()->route('products.index', compact('categories', 'categoryId', 'products'));
+        return redirect()->route('products.index');
     }
 
     public function destroy(Product $product): RedirectResponse
