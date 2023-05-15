@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AssignRolesAndPermissionsAction;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,8 @@ class RegisteredAdminController extends RegisteredUserController
 
         event(new Registered($user));
 
-        $this->assignRolesAndPermissions($user, 'admin', ['see users', 'see products', 'edit products', 'delete products', 'see payments', 'approve payments']);
+        $assignRole = new AssignRolesAndPermissionsAction();
+        $assignRole->execute($user, 'admin', ['see users', 'see products', 'edit products', 'delete products', 'see payments', 'approve payments']);
 
         Auth::login($user);
 
