@@ -14,7 +14,7 @@ use App\Http\Controllers\ClientSubcategoryController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
-    Route::get('user/info', 'userInfo')->name('user.info');
+    Route::get('user/info', 'user_info')->name('user.info');
 });
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
