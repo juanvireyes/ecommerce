@@ -12,42 +12,42 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\StoreSubcategoryRequest;
 use App\Http\Requests\UpdateSubcategoryRequest;
+use App\Repositories\CategoryRepository;
+use App\Repositories\SubcategoryRepository;
 
 class SubcategoryController extends Controller
 {
+    private $categoryRepository;
+    private $subcategoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository, SubcategoryRepository $subcategoryRepository) 
+    {
+        $this->categoryRepository = $categoryRepository;
+        $this->subcategoryRepository = $subcategoryRepository;
+    }
     
     public function index(Request $request): View
     {
-        $categories = Category::all();
-        $categoryId = $request->categoryId;
-
-        if ($categoryId) {
-            $subcategories = $this->filterSubcategories($categoryId);
-        } else {
-            $subcategories = $this->getSubcategory();
-        };
+        $categories = $this->categoryRepository->getAllCategories();
+        $subcategories = $this->getSubcategories($request->categoryId);
 
         return view('subcategories.index', compact('subcategories', 'categories'));
     }
 
-    private function getSubcategory(): Collection
+    private function getSubcategories(int $categoryId = null): Collection
     {
-        return Subcategory::with('category')->get()->sortBy('category_id');
-    }
+        if ($categoryId) {
+            $category = $this->categoryRepository->getCategoryById($categoryId);
+            return $this->subcategoryRepository->getSubcategoriesFromCategory($category);
+        }
 
-    private function filterSubcategories(int $id): Collection
-    {
-        $category = Category::where('id', $id)->firstOrFail();
-
-        return $this->getSubcategory()->filter(function ($subcategory) use ($category) {
-            return $subcategory->category_id == $category->id;
-        })->sortBy('order');
+        return $this->subcategoryRepository->getSubcategories();
     }
 
 
     public function create(Category $category): View
     {
-        $categories = Category::all();
+        $categories = $this->categoryRepository->getAllCategories();
 
         return view('subcategories.create', compact('categories'));
     }
@@ -58,7 +58,8 @@ class SubcategoryController extends Controller
         $validated = $request->validated();
         $validated['slug'] = Str::of($validated['name'])->slug('-');
         $validated['category_id'] = $request->category_id;
-        // dd($validated);
+        
+
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
                 return redirect()->back()->withErrors($request->validator());
@@ -67,9 +68,7 @@ class SubcategoryController extends Controller
             $validated['image'] = $request->file('image')->store('public');
         };
 
-        
-
-        $subcategory = Subcategory::create($validated);
+        $subcategory = $this->subcategoryRepository->storeSubcategory($validated);
 
         $subcategory->save();
 
@@ -79,9 +78,7 @@ class SubcategoryController extends Controller
     
     public function edit(Subcategory $subcategory): View
     {
-        $subcategory->find($subcategory->id);
-
-        $categories = Category::all();
+        $categories = $this->categoryRepository->getAllCategories();
 
         $this->authorize('update', $subcategory);
 
@@ -91,8 +88,6 @@ class SubcategoryController extends Controller
     
     public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
-        $subcategory->find($subcategory->id);
-
         $this->authorize('update', $subcategory);
 
         $validated = $request->validated();
@@ -102,7 +97,7 @@ class SubcategoryController extends Controller
             $validated['image'] = $request->file('image')->store('public');
         };
 
-        $subcategory->update($validated);
+        $this->subcategoryRepository->updateSubcategory($subcategory, $validated);
 
         session()->flash('success', 'Información actualizada correctamente');
 
@@ -110,11 +105,11 @@ class SubcategoryController extends Controller
     }
 
     
-    public function destroy(Subcategory $subcategory)
+    public function destroy(Subcategory $subcategory): RedirectResponse
     {
-        $subcategory->find($subcategory->id);
+        $this->authorize('delete', $subcategory);
 
-        $subcategory->delete();
+        $this->subcategoryRepository->deleteSubcategory($subcategory);
 
         return redirect()->route('subcategories.index');
     }

@@ -44,7 +44,7 @@
                         <select name="subcategoryId" id="subcategoryId" class="text-left text-red-500 font-bold w-1/2">
                             @foreach ($subcategories as $subcategory)
                                 <option value="{{ $subcategory->id }}" 
-                                    @if ($subcategory->id == $subcategory->id)
+                                    @if ($subcategory->id == $subcategoryId)
                                         selected
                                     @endif class="font-bold">{{ $subcategory->name }}</option>
                             @endforeach
@@ -55,9 +55,12 @@
                             Filtrar productos
                         </button>
                     </div>
+                    {{-- {{dd($subcategoryId)}} --}}
                 </form>
             </div>
         @endif
+
+        
 
         <div class="text-right mx-6 mb-4 pb-4">
             <a href="{{ route('products.create') }}" 

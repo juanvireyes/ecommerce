@@ -5,20 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+use App\Repositories\CategoryRepository;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    
+    private $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository) {
+        $this->categoryRepository = $categoryRepository;
+    }
+
     public function index(): View
     {
-        $categories = DB::table('categories')->orderBy('order')->limit(10)->get();
+        $categories = $this->categoryRepository->getAllCategories();
         return view('categories.index', compact('categories'));
     }
 
@@ -41,7 +44,8 @@ class CategoryController extends Controller
 
         };
 
-        $category = Category::create($validated);
+        // $category = Category::create($validated);
+        $category = $this->categoryRepository->createCategory($validated);
 
         $category->save();
 

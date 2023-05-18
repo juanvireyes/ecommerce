@@ -3,40 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Repositories\CategoryRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    private $categoriesRepository;
+
+    public function __construct(CategoryRepository $categoriesRepository)
+    {
+        $this->categoriesRepository = $categoriesRepository;
+    }
+
     public function index(Request $request): View
     {
-        $categories = Category::query();
+        $categories = $this->categoriesRepository->getAllCategories();
 
-        $search = $request->input;
+        $search = $request->filter;
 
         if ($search !== null) {
+
             $search = strtolower($search);
-            $filtered_categories = $this->filterCategories($categories, $search);
+            $filtered_categories = $this->filterCategories($search);
+
         } else {
-            $filtered_categories = $this->getCategories();
+
+            $filtered_categories = $categories;
+
         };
 
         return view('clients.categories', compact('filtered_categories', 'search'));
     }
 
-    public function getCategories(): array
+    public function filterCategories(string $search) : array
     {
-        $categories = Category::all()->sortBy('order');
+        $filteredCategories = $this->categoriesRepository->getCategoryByName($search);
 
-        return  $categories->toArray();
-    }
-
-    public function filterCategories(Builder $categories, string $search): array
-    {
-        $filteredCategories = $categories->where('name', 'like', "%{$search}%")->get();
-
-        return $filteredCategories->toArray();
+        return $filteredCategories ? [$filteredCategories] : [];
     }
 
     public function getCategoryBySlug(string $slug): Category
