@@ -11,11 +11,11 @@ use App\Repositories\Contracts\CategoryRepositoryInterface;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
+    private $cacheKey = 'categories';
+
     public function getAllCategories(): Collection
     {
-        $cacheKey = 'categories';
-
-        $categories = Cache::remember($cacheKey, 60, function () {
+        $categories = Cache::remember($this->cacheKey, 60, function () {
             return Category::orderBy('order')->get();
         });
 
@@ -41,7 +41,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         $category = Category::create($data);
         
-        Cache::forget('categories');
+        Cache::forget($this->cacheKey);
         
         return $category;
     }
@@ -50,7 +50,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         $category->update($data);
 
-        Cache::forget('categories');
+        Cache::forget($this->cacheKey);
 
         return $category;
     }
@@ -61,7 +61,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
             $category->delete();
             
-            Cache::forget('categories');
+            Cache::forget($this->cacheKey);
             
             return true;
 

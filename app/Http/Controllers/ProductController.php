@@ -12,6 +12,8 @@ use App\Http\Requests\UpdateProductFormRequest;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SubcategoryRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -29,39 +31,71 @@ class ProductController extends Controller
 
     public function index(Request $request): View
     {
+        // dd($request->all());
+
         $categories = $this->categoryRepository->getAllCategories();
         
         $categoryId = $request->categoryId;
 
         if ($categoryId) {
 
-            $category = $this->categoryRepository->getCategoryById($categoryId);
-            
-            $subcategories = $this->subcategoryRepository->getSubcategoriesFromCategory($category);
+            $subcategories = $this->getFilteredSubcategories($categoryId);
 
             $subcategoryId = $request->subcategoryId;
 
-            if ($subcategoryId) {
-    
-                $subcategory = $this->subcategoryRepository->getSubcategoryById($subcategoryId);
+            $products = $this->getFilteredProducts($subcategoryId);
 
-                $products = $this->productRepository->getProductsBySubcategory($subcategory);
+            if ($request->price == 'asc') {
+                $products->orderBy('price', 'asc');
+            }
 
-                return view('products.index', compact('categories', 'categoryId', 'subcategories', 'subcategoryId', 'products'));
+            return view('products.index', compact('categories', 'categoryId', 'subcategories', 'subcategoryId', 'products'));
 
+        } else {
+
+            if ($request->search) {
+
+                $products = $this->productRepository->getProductsByName($request->search);
             } else {
 
                 $products = $this->productRepository->getAllProducts();
-
-                return view('products.index', compact('categories', 'categoryId', 'subcategories', 'products', 'subcategoryId'));
             };
-        } else {
 
-            $products = $this->productRepository->getAllProducts();
+            if ($request->price == 'asc') {
+                
+                $products = $this->productRepository->orderProductsByPrice($request->price);
+
+            } elseif ($request->price == 'desc') {
+
+                $products = $this->productRepository->orderProductsByPrice($request->price);
+            };
 
             return view('products.index', compact('categories', 'categoryId', 'products'));
         };
 
+    }
+
+
+    private function getFilteredSubcategories(?int $categoryId): Collection
+    {
+        $category = $this->categoryRepository->getCategoryById($categoryId);
+                
+        return $this->subcategoryRepository->getSubcategoriesFromCategory($category);
+    }
+
+
+    private function getFilteredProducts(?int $subcategoryId): LengthAwarePaginator
+    {
+        if ($subcategoryId) {
+    
+            $subcategory = $this->subcategoryRepository->getSubcategoryById($subcategoryId);
+
+            return $this->productRepository->getProductsBySubcategory($subcategory);
+
+        } else {
+
+            return $this->productRepository->getAllProducts();
+        };
     }
 
 
@@ -72,7 +106,7 @@ class ProductController extends Controller
         $categoryId = $request->categoryId;
 
         if ($categoryId) {
-            $subcategories = $this->subcategoryRepository->getSubcategoriesFromCategory($categoryId);
+            $subcategories = $this->getFilteredSubcategories($categoryId);
 
             $subcategory_id = $request->subcategory_id;
 
@@ -96,7 +130,7 @@ class ProductController extends Controller
                 return redirect()->back()->withErrors($request->validator());
             };
 
-            $validated['image'] = $request->file('image')->store('products');
+            $validated['image'] = $request->file('image')->store('public/products');
         };
 
         if ($validated['stock'] > 0) {
@@ -123,7 +157,7 @@ class ProductController extends Controller
 
             $category = $this->categoryRepository->getCategoryById($categoryId);
 
-            $subcategories = $this->subcategoryRepository->getSubcategoriesFromCategory($category);
+            $subcategories = $this->getFilteredSubcategories($categoryId);
 
             $subcategory_id = $request->subcategory_id;
 
@@ -132,6 +166,7 @@ class ProductController extends Controller
                 $subcategory = $this->subcategoryRepository->getSubcategoryById($subcategory_id);
 
                 return view('products.edit', compact('categories', 'categoryId', 'subcategories', 'subcategory_id', 'product'));
+
             } else {
 
                 return view('products.edit', compact('categories', 'categoryId', 'subcategories', 'product'));
@@ -151,6 +186,7 @@ class ProductController extends Controller
         $this->authorize('update', $product);
         
         $validated = $request->validated();
+        $validated['slug'] = Str::of($validated['name'])->slug('-');
 
         if ($request->hasFile('image')) {
 
@@ -158,7 +194,7 @@ class ProductController extends Controller
                 return redirect()->back()->withErrors($request->validator());
             };
 
-            $validated['image'] = $request->file('image')->store('products');
+            $validated['image'] = $request->file('image')->store('public/products');
         };
 
         if ($validated['stock'] > 0) {
@@ -172,8 +208,6 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
-        $product = Product::find($product->id);
-
         $product->delete();
 
         return  redirect()->route('products.index');

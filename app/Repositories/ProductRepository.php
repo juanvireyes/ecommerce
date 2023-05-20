@@ -38,12 +38,33 @@ class ProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    public function getProductsBySubcategory(Subcategory $subcategory): Collection
+    public function orderProductsByPrice(string $sortBy): LengthAwarePaginator
     {
-        // return $subcategory->products()->orderBy('order')->get();
-        $subcategory = $this->subcategoryRepository->getSubcategoryById($subcategory->id);
+        $products = Product::with('subcategory')->orderBy('price', $sortBy);
 
-        return $subcategory->products;
+        return $products->paginate(20);
+    }
+
+    public function orderFilteredProductsByPrice(Subcategory $subcategory, string $sortBy): LengthAwarePaginator
+    {
+        return $subcategory->products()->orderBy('price', $sortBy)->paginate(20);
+    }
+
+    public function getProductsBySubcategory(Subcategory $subcategory): LengthAwarePaginator
+    {
+        return $subcategory->products()->with('subcategory')->orderBy('order')->paginate(20);
+        
+    }
+
+    public function getProductsByName(string $name): LengthAwarePaginator
+    {
+        return Product::where('name', 'like', '%' . $name . '%')
+                ->with('subcategory')->paginate(20);
+    }
+
+    public function getProductBySlug(string $slug): Product
+    {
+        return Product::where('slug', $slug)->firstOrFail();
     }
 
     public function createProduct(array $data): Product

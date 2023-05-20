@@ -31,7 +31,7 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
 
     public function getSubcategoriesFromCategory(Category $category): Collection
     {
-        $category = $this->categoryRepository->getCategoryById($category->id);
+        // $category = $this->categoryRepository->getCategoryById($category->id);
 
         return $category->subcategories;
     }

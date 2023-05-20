@@ -11,12 +11,14 @@ use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ClientSubcategoryController;
-
+use App\Http\Controllers\TestingController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('user/info', 'user_info')->name('user.info');
 });
+
+Route::get('testing', [TestingController::class, 'index'])->name('testing');
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');

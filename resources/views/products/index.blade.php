@@ -20,6 +20,20 @@
             <h1 class="text-red-600 text-2xl font-bold">Edición y creación de Productos</h1>
         </div>
 
+        <div class="mx-auto text-center mt-3 mb-3 py-3 w-full">
+            <form action="{{ route('products.index') }}" method="get">
+                
+                <label for="search" class="text-red-600 text-md font-semibold">Buscar producto</label>
+
+                <input type="text" name="search" id="search" placeholder="Nombre producto">
+
+                <button type="submit"
+                class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
+                >Buscar</button>
+
+            </form>
+        </div>
+
         <div class="flex flex-row justify-left gap-4 mt-3 py-2 px-6">
             <form action="{{ route('products.index') }}" method="GET">
                 <select name="categoryId" id="categoryId" class="text-left text-red-500 font-bold w-1/2">
@@ -33,8 +47,26 @@
                 </select>
 
                 <button type="submit"
-                class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold">Ver subcategorías</button>
+                class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
+                >Ver subcategorías</button>
             </form>
+
+
+            <form action="{{ route('products.index') }}" method="get">
+
+                    <label for="price">
+                        Ordenar productos
+                    </label>
+                    <select name="price" id="price">
+                        <option value=""></option>
+                        <option value="desc">Mayor a menor precio</option>
+                        <option value="asc">Menor a mayor precio</option>
+                    </select>
+    
+                    <button type="submit"
+                    class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
+                    >Ordenar productos</button>
+                </form>
         </div>
 
         @if (!empty($categoryId))
@@ -49,18 +81,18 @@
                                     @endif class="font-bold">{{ $subcategory->name }}</option>
                             @endforeach
                         </select>
-    
+                        
+                        <input type="hidden" name="categoryId" value={{ $categoryId }}>
+
                         <button type="submit" 
-                        class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold inline-block">
+                        class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold inline-block w-full">
                             Filtrar productos
                         </button>
                     </div>
-                    {{-- {{dd($subcategoryId)}} --}}
                 </form>
+
             </div>
         @endif
-
-        
 
         <div class="text-right mx-6 mb-4 pb-4">
             <a href="{{ route('products.create') }}" 

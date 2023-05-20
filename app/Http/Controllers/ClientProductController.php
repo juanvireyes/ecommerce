@@ -3,33 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\View\View;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Repositories\ProductRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\SubcategoryRepository;
 
 class ClientProductController extends ClientSubcategoryController
 {
+    private $categoryRepository;
+    private $subcategoryRepository;
+    private $productRepository;
+
+    public function __construct(CategoryRepository $categoryRepository, 
+    SubcategoryRepository $subcategoryRepository, 
+    ProductRepository $productRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+
+        $this->subcategoryRepository = $subcategoryRepository;
+
+        $this->productRepository = $productRepository;
+    }
+    
     public function products(string $categorySlug, string $subcategorySlug): View
     {
-        $category = $this->getCategoryBySlug($categorySlug);
+        $category = $this->categoryRepository->getCategoryBySlug($categorySlug);
         
-        $subcategory = $this->getSubcategoryBySlug($subcategorySlug);
+        $subcategory = $this->subcategoryRepository->getSubcategoryBySlug($subcategorySlug);
 
-        $products = $this->getProducts($subcategory);
+        $products = $this->productRepository->getProductsBySubcategory($subcategory);
 
         return view('clients.products', compact('category', 'subcategory', 'products'));
     }
 
-    private function getProducts(Subcategory $subcategory): array
+    public function show(string $categorySlug, string $subcategorySlug, string $productSlug): View
     {
-        return $subcategory->products()->get()->toArray();
-    }
-
-    public function show(Product $product)
-    {
-        $product = Product::find($product->id);
-        dd($product);
-        return view('clients.product-detail', compact('product'));
+        $category = $this->categoryRepository->getCategoryBySlug($categorySlug);
+        $subcategory = $this->subcategoryRepository->getSubcategoryBySlug($subcategorySlug);
+        $product = $this->productRepository->getProductBySlug($productSlug);
+        // dd($product);
+        return view('clients.product-detail', compact('product',  'category', 'subcategory'));
     }
 
     
