@@ -5,13 +5,10 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
-use Illuminate\Routing\Route;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Http\UploadedFile;
 use Spatie\Permission\Models\Role;
 use Database\Seeders\PermissionsSeeder;
-use function PHPUnit\Framework\assertTrue;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CategoryTest extends TestCase

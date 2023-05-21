@@ -17,14 +17,14 @@ class SubcategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $category = $this->getRandomCategoryExceptOne(Category::first());
+        
         return [
             'name' => fake()->word(),
             'slug' => fake()->slug(),
             'description' => fake()->text(),
             'image' => fake()->imageUrl(),
             'order' => fake()->unique()->numberBetween(4, 24),
-            'category_id' => $category->id,
+            'category_id' => Category::factory()->create()->id,
         ];
     }
 
