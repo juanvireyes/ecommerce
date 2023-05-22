@@ -308,6 +308,31 @@ class ProductTest extends TestCase
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
 
+        $role = Role::findByName('superadmin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('products.edit', $product->id));
+        
+        $response->assertStatus(200);
+        $response->assertViewIs('products.edit');
+    }
+
+    public function test_edit_product_form_can_be_seen_by_admin(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
         $role = Role::findByName('admin')->first();
 
         $user = User::factory()->create();
@@ -316,13 +341,168 @@ class ProductTest extends TestCase
 
         $this->assertTrue($user->hasRole($role));
 
-        // $product = Product::factory()->create();
+        $subcategoryId = Subcategory::factory()->create()->id;
 
-        // $this->actingAs($user);
+        $product = Product::factory()->create();
 
-        // $response = $this->get(route('products.edit', $product->id));
+        $this->actingAs($user);
+
+        $response = $this->get(route('products.edit', $product->id));
         
-        // $response->assertStatus(200);
-        // $response->assertViewIs('products.edit');
+        $response->assertStatus(200);
+        $response->assertViewIs('products.edit');
+    }
+
+    public function test_edit_product_form_cannot_be_seen_by_client(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $role = Role::where('name', 'client')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('products.edit', $product->id));
+        
+        $response->assertStatus(403);
+    }
+
+    public function test_product_info_can_be_updated(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $role = Role::findByName('admin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $this->actingAs($user);
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $file = UploadedFile::fake()->image('test.jpg');
+
+        $response = $this->put(route('products.update', $product->id), [
+            'name' => 'Test product',
+            'slug' => 'test-product',
+            'description' => 'Test description',
+            'price' => '100',
+            'image' => $file,
+            'subcategory_id' => $subcategoryId,
+            'stock' => '100',
+            'active' => true,
+            'order' => 1
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('products.index'));
+    }
+
+    public function test_product_info_can_be_updated_without_image(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $role = Role::findByName('admin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $this->actingAs($user);
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $response = $this->put(route('products.update', $product->id), [
+            'name' => 'Test product',
+            'slug' => 'test-product',
+            'description' => 'Test description',
+            'price' => '100',
+            'subcategory_id' => $subcategoryId,
+            'stock' => '100',
+            'active' => true,
+            'order' => 1
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('products.index'));
+    }
+
+    public function test_product_info_cannot_be_updated_with_invalid_image_format(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $role = Role::findByName('admin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $this->actingAs($user);
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $file = UploadedFile::fake()->image('test.pdf');
+
+        $response = $this->put(route('products.update', $product->id), [
+            'name' => 'Test product',
+            'slug' => 'test-product',
+            'description' => 'Test description',
+            'price' => '100',
+            'image' => $file,
+            'subcategory_id' => $subcategoryId,
+            'stock' => '100',
+            'active' => true,
+            'order' => 1
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('image');
+    }
+
+    public function test_product_can_be_deleted_by_superadmin(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $role = Role::findByName('admin')->first();
+
+        $user = User::factory()->create();
+
+        $user->assignRole($role);
+
+        $this->assertTrue($user->hasRole($role));
+
+        $this->actingAs($user);
+        $subcategoryId = Subcategory::factory()->create()->id;
+
+        $product = Product::factory()->create();
+
+        $response = $this->delete(route('products.destroy', $product->id));
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('products.index'));
     }
 }
