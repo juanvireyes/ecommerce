@@ -12,13 +12,24 @@ use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ClientSubcategoryController;
 use App\Http\Controllers\TestingController;
+use GuzzleHttp\Client;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('user/info', 'user_info')->name('user.info');
 });
 
-Route::get('testing', [TestingController::class, 'index'])->name('testing');
+Route::middleware('guest')->group(function () {
+    Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
+    Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
+    Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
+});
+
+Route::controller(TestingController::class)->group(function () {
+    Route::get('testing', 'index')->name('testing');
+    Route::get('load',  'loadProducts')->name('load');
+});
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');
@@ -61,10 +72,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
-    Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
-    Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
-    Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
 });
 
 require __DIR__ . '/auth.php';

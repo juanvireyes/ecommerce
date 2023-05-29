@@ -3,7 +3,7 @@
 @section('title', 'Testing')
 
 @section('content')
-    <div class="container mx-auto">
+    {{-- <div class="container mx-auto">
         <h1>Pruebas de filtro</h1>
 
         <form action="{{ route('testing') }}" method="get">
@@ -48,5 +48,8 @@
         </ul>
         {{ $products->links() }}
 
+    </div> --}}
+    <div id="app">
+        <custom-component :products="{{ json_encode($products) }}" />
     </div>
 @endsection
