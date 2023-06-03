@@ -37,8 +37,6 @@ class CartController extends Controller
 
         $cartItems->total = FacadesCart::subtotal();
 
-        // dd($cartItems);
-
         return view('cart.index', compact('cartItems'));
     }
 
