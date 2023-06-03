@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->boolean('completed')->default(false);
             $table->dateTime('completed_at')->nullable();
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->string('shipping_method')->nullable();
             $table->string('shipping_address')->nullable();
+            $table->integer('shipping_cost')->nullable();
             $table->string('billing_address')->nullable();
             $table->timestamps();
         });

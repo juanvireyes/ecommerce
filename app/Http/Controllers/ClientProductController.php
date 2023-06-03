@@ -43,7 +43,7 @@ class ClientProductController extends ClientSubcategoryController
         $category = $this->categoryRepository->getCategoryBySlug($categorySlug);
         $subcategory = $this->subcategoryRepository->getSubcategoryBySlug($subcategorySlug);
         $product = $this->productRepository->getProductBySlug($productSlug);
-        // dd($product);
+        
         return view('clients.product-detail', compact('product',  'category', 'subcategory'));
     }
 

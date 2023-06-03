@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -19,17 +20,20 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('user/info', 'user_info')->name('user.info');
 });
 
-Route::middleware('guest')->group(function () {
+Route::middleware(['web'])->group(function () {
     Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
     Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
     Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
     Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('cart', [CartController::class, 'addToCart'])->name('cart.add');
 });
+
 
 Route::controller(TestingController::class)->group(function () {
     Route::get('testing', 'index')->name('testing');
     Route::get('load',  'loadProducts')->name('load');
-});
+})->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');

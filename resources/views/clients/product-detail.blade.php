@@ -8,6 +8,12 @@
         class="text-red-500 text-center text-7xl font-bold mt-4 mb-3 py-3 underline underline-offset-4">
         {{$product->name}}</h1>
 
+        @if (session()->has('success'))
+            <div class="text-center mt-4 mb-2">
+                <p class="alert alert-success text-green-500 text-md font-semibold">{{ session('success') }}</p>
+            </div>
+        @endif
+
         <div class="flex gap-12 mt-4 py-4">
 
             <div class="flex flex-col w-1/2 h-auto">
@@ -43,7 +49,7 @@
                     <p class="text-gray-600 text-5xl font-semibold">{{ $product->price }}</p>
                 </div>
                 <div>
-                    <form action="" method="post">
+                    <form action="{{ route('cart.add') }}" method="post">
                         @csrf
                         <input type="hidden" name="productId" value="{{ $product->id }}">
 
@@ -52,7 +58,7 @@
                                 <label for="quantity" class="text-red-500 text-2xl font-semibold px-4">Cantidad</label>
                             </div>
                             <div class="items-center mt-4 mb-4 py-3">
-                                <input type="number" name="quantity" id="quantity">
+                                <input type="number" name="quantity" id="quantity" min="1">
                             </div>
                         </div>
 

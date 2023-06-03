@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UpdateProductStatusAction;
 use Illuminate\View\View;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
@@ -25,50 +26,6 @@ class TestingController extends Controller
         $this->productRepository = $productRepository;
     }
 
-    // public function index(Request $request, Subcategory $subcategory): View
-    // {
-    //     // dd($request->all());
-        
-    //     $categories = $this->categoriesRepository->getAllCategories();
-
-    //     $categoryId = $request->categoryId;
-
-    //     if ($categoryId != null) {
-
-    //         $category = $this->categoriesRepository->getCategoryById($categoryId);
-
-    //         // dd($category);
-
-    //         $subcategories = $this->subcategoryRepository->getSubcategoriesFromCategory($category);
-
-    //         // dd($subcategories);
-
-    //         $subcategoryId = $request->subcategoryId;
-            
-    //         if ($subcategoryId) {
-
-    //             $subcategory = $this->subcategoryRepository->getSubcategoryById($subcategoryId);
-
-    //             $products = $this->productRepository->getProductsBySubcategory($subcategory);
-                
-    //             return view('testing', compact('categories', 'categoryId', 'subcategories', 'subcategoryId', 'products', 'subcategory'));
-    //         };
-
-    //     };
-        
-    //     $products = $this->productRepository->getAllProducts();
-
-    //     // dd($request->order);
-    //     if ($request->price == 'asc') {
-    //         $products = $this->productRepository->orderProductsByPrice($request->price);
-    //     } elseif ($request->price == 'desc') {
-    //         $products = $this->productRepository->orderProductsByPrice($request->price);
-    //     };
-
-    //     return view('testing', compact('categories', 'products'));
-        
-    // }
-
     public function index(Request $request): View
     {
         $products = $this->loadProducts();
@@ -81,5 +38,10 @@ class TestingController extends Controller
         $products = $this->productRepository->getAllProducts();
 
         return response()->json($products);
+    }
+
+    public function updateAllProducts(UpdateProductStatusAction $action)
+    {
+        return $action->execute();
     }
 }

@@ -67,6 +67,11 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::where('slug', $slug)->firstOrFail();
     }
 
+    public function getProductsByStock(): Collection
+    {
+        return Product::where('stock', '>', 0)->get();
+    }
+
     public function createProduct(array $data): Product
     {
         $product = Product::create($data);

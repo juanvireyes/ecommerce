@@ -14,19 +14,20 @@
     <div class="container px-4 mx-auto">
         <header class="flex justify-between items-center py-4 bg-gray-300">
             <div class="flex items-center flex-grow gap-4">
-                @if (Auth::user())
                 <a href="{{ route('clients.index') }}" class="px-4">
                     <img src="{{ asset('images/logo.png') }}" class="h-12 mx-auto">
                     <p class="text-red-500 text-lg text-center font-bold">Mercatodo</p>
                 </a>
-                @else
-                <a href="{{ route('home') }}" class="px-4">
-                    <img src="{{ asset('images/logo.png') }}" class="h-12 mx-auto">
-                    <p class="text-red-500 text-lg text-center font-bold">Mercatodo</p>
-                </a>
-                @endif
             </div>
             <div class="flex items-center">
+                <div class="ml-auto flex items-center">
+                    <a href="{{ route('cart.index') }}" class="mr-6 text-red-500">
+                        <img src="{{ asset('images/shopping-cart.png') }}" 
+                        alt="Shopping Cart" 
+                        class="h-12 mx-auto">
+                        <p class="text-red-500 text-lg text-center font-bold">Carrito</p>
+                    </a>
+                </div>
                 @auth
                     <div class="ml-auto flex items-center">
                         @if (Auth::user()->hasRole(['superadmin', 'admin']))

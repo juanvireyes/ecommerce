@@ -51,5 +51,6 @@
     </div> --}}
     <div id="app">
         <custom-component :products="{{ json_encode($products) }}" />
+
     </div>
 @endsection
