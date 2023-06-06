@@ -22,7 +22,7 @@ class CartTest extends TestCase
     /**
      * @test
      */
-    public function add_to_cart_test(): void
+    public function add_to_cart(): void
     {
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
@@ -49,7 +49,7 @@ class CartTest extends TestCase
 
 
     /** @test */
-    public function remove_from_cart_test(): void
+    public function remove_from_cart(): void
     {
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
@@ -75,7 +75,7 @@ class CartTest extends TestCase
 
 
     /** @test */
-    public function update_cart_test(): void
+    public function update_cart(): void
     {
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
@@ -98,5 +98,34 @@ class CartTest extends TestCase
         ]);
 
         $response->assertRedirect(url()->previous());
+    }
+
+    /** @test */
+    public function clear_cart(): void
+    {
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $user = User::factory()->create();
+
+        $category = Category::factory()->create();
+
+        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
+
+        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
+        $cart = Cart::factory()->create(['user_id' => $user->id]);
+        $quantity = 2;
+
+        $cartItem = CartItemController::store($cart, $product, $quantity);
+
+        $response = $this->actingAs($user)->post(route('cart.clear', ['cart' => $cart]));
+
+        $response->assertRedirect(route('cart.index'));
+    }
+
+    /** @test */
+    public function checkout_cart(): void
+    {
+        //
     }
 }
