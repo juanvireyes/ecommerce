@@ -38,7 +38,7 @@ class CartItemController extends Controller
      */
     public function update(UpdateCartItemRequest $request, CartItem $cartItem): RedirectResponse
     {
-        $cart = Cart::find($request->cart_id);
+        $cart = $cartItem->cart;
 
         $product = Product::find($cartItem->product_id);
 
@@ -91,15 +91,13 @@ class CartItemController extends Controller
      */
     public function destroy(CartItem $cartItem, Request $request)
     {
+        $cart = $cartItem->cart;
+
         $cartItem->product->increaseStock($cartItem->quantity);
 
         $cartItem->product->updateStatus();
 
         $cartItem->delete();
-
-        $cartId = $request->cart_id;
-
-        $cart = Cart::find($cartId);
 
         $cart->calculateCartTotalAmountTest();
 
