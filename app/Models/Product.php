@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Exception;
 use App\Models\Subcategory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -32,5 +33,41 @@ class Product extends Model
     public function cartItems(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function reduceStock(int $quantity): self
+    {
+        if($quantity <= $this->stock) {
+
+            $this->stock -= $quantity;
+            $this->save();
+            return $this;
+
+        } else {
+
+            throw new Exception('Stock insuficiente');
+
+        }
+    }
+
+    public function increaseStock(int $quantity): self
+    {
+        $this->stock += $quantity;
+        
+        $this->save();
+        
+        return $this;
+    }
+
+    public function updateStatus(): self
+    {
+        if ($this->stock > 0) {
+            $this->active = true;
+        } elseif ($this->stock == 0) {
+            $this->active = false;
+        };
+
+        $this->save();
+        return $this;
     }
 }

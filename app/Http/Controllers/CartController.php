@@ -2,87 +2,111 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Cart;
 use App\Models\Product;
-use App\Models\CartItem;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Session;
-use App\Http\Requests\StoreCartItemRequest;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Repositories\ProductRepository;
-use Barryvdh\Debugbar\Facade;
-use Gloudemans\Shoppingcart\Facades\Cart as FacadesCart;
-use Illuminate\Validation\ValidationException;
+use App\Http\Requests\StoreCartItemRequest;
 
 class CartController extends Controller
 {
-    private $productRepository;
+    private ProductRepository $productRepository;
 
     public function __construct(ProductRepository $productRepository)
     {
         $this->productRepository = $productRepository;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    
+
+    public function index(): View
     {
-        $cartItems = FacadesCart::content();
+        $user = auth()->user();
 
-        foreach ($cartItems as $cartItem) {
+        if(!$user) {
+
+            return view('auth.login');
+
+        } else {
+
+            $cart = $user->cart;
             
-            $cartItem->itemTotal = $cartItem->price * $cartItem->qty;
-        }
+            $cartItems = $cart->cartItems->groupBy('product_id')->map(function ($items) {
+                $item = $items->first();
+                $item->quantity = $items->sum('quantity');
+                $item->item_total_amount = $items->sum('item_total_amount');
+                return $item;
+            });
 
-        $cartItems->total = FacadesCart::subtotal();
-
-        return view('cart.index', compact('cartItems'));
+            return view('cart.index', compact('cartItems', 'cart'));
+        };
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function addToCart(StoreCartItemRequest $request)
+    
+    
+    public function addToCart(StoreCartItemRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $productId = $validated['productId'];
+        $quantity = $validated['quantity'];
 
-        $product = $this->productRepository->getProductById($validated['productId']);
+        $product = $this->productRepository->getProductById($productId);
 
-        $cart = FacadesCart::add($product->id, $product->name, $validated['quantity'], $product->price);
+        $userId = auth()->id();
 
-        return redirect()->back()->with('success', 'Producto agregado al carrito');
+        if(!$userId) {
+
+            return redirect()->route('login');
+
+        } else {
+
+            $cart = Cart::firstOrCreate([
+                'user_id' => $userId
+            ]);
+            
+            $cartItem = CartItemController::store($cart, $product, $quantity);
+
+            try {
+                $product->reduceStock($quantity);
+            } catch (Exception $e) {
+                return back()->with('error', $e->getMessage());
+            };
+
+            $product->updateStatus();
+
+            if ($cartItem) {
+
+                $cart->calculateCartTotalAmountTest();
+
+                return back()->with('success', 'Producto agregado al carrito');
+
+            } else {
+
+                return back()->with('error', 'Error al agregar el producto al carrito');
+
+            };
+        };
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cart $cart)
+    
+    public function clearCart(Cart $cart): RedirectResponse
     {
-        //
-    }
+        $cartItems = $cart->cartItems;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cart $cart)
-    {
-        //
-    }
+        foreach ($cartItems as $cartItem) {
+            $product = $cartItem->product;
+            $quantity = $cartItem->quantity;
+            $product->increaseStock($quantity);
+            $product->updateStatus();
+        };
+        
+        $cart->cartItems()->delete();
+        $cart->total_amount = 0;
+        $cart->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cart $cart)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cart $cart)
-    {
-        //
+        return redirect()->route('cart.index');
     }
 }

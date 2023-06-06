@@ -17,8 +17,10 @@ return new class extends Migration
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->string('product_name', 255);
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
+            $table->decimal('item_total_amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -20,6 +20,11 @@ class Cart extends Model
         'shipping_method',
         'shipping_cost',
         'billing_address',
+        'expires_at',
+    ];
+
+    protected $dates = [
+        'expires_at',
     ];
 
     public function user(): BelongsTo
@@ -30,5 +35,22 @@ class Cart extends Model
     public function cartItems(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function calculateCartTotalAmountTest(): self
+    {
+        $cartItems = $this->cartItems;
+
+        $totalAmount = 0;
+
+        foreach ($cartItems as $item) {
+            $totalAmount += $item->quantity * $item->price;
+        };
+
+        $this->total_amount = $totalAmount;
+
+        $this->save();
+
+        return $this;
     }
 }

@@ -5,94 +5,104 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\UpdateCartItemRequest;
-use Illuminate\Validation\ValidationException;
 
 class CartItemController extends Controller
 {
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public static function store(int $productId, int $quantity): JsonResponse
+    public static function store(Cart $cart, Product $product, int $quantity): CartItem
     {
-        // $cart = new Cart();
-        $cartId = Session::get('cart_id');
+        $cartId = $cart->id;
+        $productId = $product->id;
+        $productName = $product->name;
+        $productPrice = $product->price;
 
-        // $cart = $cartId ? Cart::find($cartId) : new Cart();
-
-        if(!$cartId) {
-            $cart = Cart::create();
-            $cartId = Session::put('cart_id', $cart->id);
-            dd($cart->id);
-        };
-
-        $cartItem = new CartItem();
-
-        $existingCartItem = $cartItem->product()->where('id', $productId)->first();
-
-        if($existingCartItem) {
-
-            $existingCartItem->quantity += $quantity;
-            $existingCartItem->save();
-
-        } else {
-
-            $product = Product::find($productId);
-
-            if(!$product) {
-                throw new ValidationException('Product not found');
-            };
-
-            CartItem::create([
-                'cart_id' => $cartId,
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'price' => $product->price,
-            ]);
-        };
-
-        return response()->json([
-            'message' => 'Producto agregado exitosamente',
+        $cartItem = CartItem::Create([
+            'cart_id' => $cartId,
+            'product_id' => $productId,
+            'product_name' => $productName,
+            'quantity' => $quantity,
+            'price' => $productPrice,
+            'item_total_amount' => $product->price * $quantity,
         ]);
 
+        return $cartItem;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CartItem $cartItem)
-    {
-        //
-    }
+  
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCartItemRequest $request, CartItem $cartItem)
+    public function update(UpdateCartItemRequest $request, CartItem $cartItem): RedirectResponse
     {
-        $product = $cartItem->product;
+        $cart = Cart::find($request->cart_id);
 
-        $validated  = $request->validated();
+        $product = Product::find($cartItem->product_id);
 
-        $product->update($validated);
+        $validated = $request->validated();
+        $quantity = $validated['quantity'];
+        $actualAmount = $cartItem->price * $quantity;
+        $actualQuantity = $cartItem->quantity;
 
-        return response()->json([
-            'data' => $product,
-        ]);
+        if($quantity < $cartItem->quantity) {
+
+            $newQuantity = $actualQuantity - $quantity;
+            
+            $cartItem->quantity = $newQuantity;
+            
+            $newAmount = $actualAmount;
+            
+            $cartItem->item_total_amount = $newAmount;
+
+            $product->increaseStock($newQuantity);
+
+            $product->updateStatus();
+
+        } elseif ($quantity > $cartItem->quantity) {
+
+            $quantityDifference = $quantity - $actualQuantity;
+            
+            $newQuantity = $cartItem->quantity + $quantityDifference;
+            
+            $cartItem->quantity = $newQuantity;
+            
+            $newAmount = $actualAmount;
+            
+            $cartItem->item_total_amount = $newAmount;
+
+            $product->reduceStock($newQuantity);
+
+            $product->updateStatus();
+        }
+
+        
+        $cartItem->save();
+
+        $cart->total_amount = $cart->calculateCartTotalAmountTest();
+
+        return back()->with('success', 'Producto actualizado exitosamente');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CartItem $cartItem)
+    public function destroy(CartItem $cartItem, Request $request)
     {
+        $cartItem->product->increaseStock($cartItem->quantity);
+
+        $cartItem->product->updateStatus();
+
         $cartItem->delete();
 
-        return response()->json([
-            'data' => 'Producto eliminado exitosamente',
-        ]);
+        $cartId = $request->cart_id;
+
+        $cart = Cart::find($cartId);
+
+        $cart->calculateCartTotalAmountTest();
+
+        return back()->with('success', 'Producto eliminado exitosamente');
     }
 }

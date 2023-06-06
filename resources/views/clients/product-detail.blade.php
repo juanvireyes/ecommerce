@@ -14,6 +14,12 @@
             </div>
         @endif
 
+        @if (session()->has('error'))
+            <div class="text-center mt-4 mb-2">
+                <p class="alert alert-error text-red-500 text-md font-semibold">{{ session('error') }}</p>
+            </div>
+        @endif
+
         <div class="flex gap-12 mt-4 py-4">
 
             <div class="flex flex-col w-1/2 h-auto">
@@ -58,7 +64,7 @@
                                 <label for="quantity" class="text-red-500 text-2xl font-semibold px-4">Cantidad</label>
                             </div>
                             <div class="items-center mt-4 mb-4 py-3">
-                                <input type="number" name="quantity" id="quantity" min="1">
+                                <input type="number" name="quantity" id="quantity" min="1" value="0">
                             </div>
                         </div>
 

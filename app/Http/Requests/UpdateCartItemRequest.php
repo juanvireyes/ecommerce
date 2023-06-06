@@ -23,6 +23,7 @@ class UpdateCartItemRequest extends FormRequest
         return [
             'quantity.required' => 'La cantidad es requerida',
             'quantity.integer' => 'La cantidad debe ser un número entero',
+            'quantity.min' => 'La cantidad debe ser mayor a 0',
         ];
     }
 }

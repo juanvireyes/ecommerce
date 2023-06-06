@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CartItemController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -27,13 +28,20 @@ Route::middleware(['web'])->group(function () {
     Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
     Route::get('cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('cart', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('cart/clear/{cart}', [CartController::class, 'clearCart'])->name('cart.clear');
+    Route::patch('cart/{cartItem}', [CartItemController::class, 'update'])->name('cart.update');
+    Route::delete('cart/{cartItem}', [CartItemController::class, 'destroy'])->name('cart.destroy');
 });
 
 
-Route::controller(TestingController::class)->group(function () {
-    Route::get('testing', 'index')->name('testing');
-    Route::get('load',  'loadProducts')->name('load');
-})->middleware(['auth', 'verified']);
+Route::middleware(['web'])->group(function () {
+    Route::get('testing', [TestingController::class, 'index'])->name('testing');
+    Route::post('testing', [TestingController::class, 'addToCartTest'])->name('testingcart.add');
+    Route::get('testing/cart', [TestingController::class, 'showCartContentTest'])->name('testingcart.show');
+    Route::patch('testing/cart/{cartItem}', [CartItemController::class, 'update'])->name('testingcart.update');
+    Route::delete('testing/cart/{cartItem}', [CartItemController::class, 'destroy'])->name('testingcart.destroy');
+    Route::post('testing/cart/clear/{cart}', [TestingController::class, 'clearCartTest'])->name('testingcart.clear');
+});
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');
