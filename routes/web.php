@@ -1,20 +1,21 @@
 <?php
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CartItemController;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestingController;
+use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ClientSubcategoryController;
-use App\Http\Controllers\TestingController;
-use GuzzleHttp\Client;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('user-dashboard', [UserController::class, 'index'])->name('user.dashboard');
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 });
 
 Route::middleware('auth')->group(function () {

@@ -53,4 +53,22 @@ class Cart extends Model
 
         return $this;
     }
+
+    public function clearCart(): self
+    {
+        $cartItems = $this->cartItems;
+
+        foreach ($cartItems as $cartItem) {
+            $product = $cartItem->product;
+            $quantity = $cartItem->quantity;
+            $product->increaseStock($quantity);
+            $product->updateStatus();
+        };
+        
+        $this->cartItems()->delete();
+        $this->total_amount = 0;
+        $this->save();
+
+        return $this;
+    }
 }

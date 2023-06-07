@@ -4,6 +4,18 @@
 
 @section('content')
 
+@if ($isEmpty)
+    <div class="container mx-auto">
+        <div class="text-center mt-4 mb-2">
+            <h1 class="text-red-600 text-2xl font-bold py-2">No tienes productos agregados todavía</h1>
+        </div>
+        <div class="text-center mt-4 py-2">
+            <a href="{{ route('clients.index') }}" class="bg-sky-300 text-black text-2xl px-2 py-2 rounded-md text-center">
+                Agregar productos
+            </a>
+        </div>
+    </div>
+@else
     <div class="container mx-auto">
         <div class="flex flex-col justify-center items-center mt-4 mb-4 px-2 py-2">
             <table>
@@ -101,6 +113,20 @@
             </div>
 
             <div class="flex flex-row justify-center mt-2 my-2">
+                <a href="{{ route('orders.index') }}" 
+                class="bg-red-300 text-black text-2xl font-bold px-3 py-3 rounded-md">
+                    Seguir al checkout
+                </a>
+            </div>
+
+            <div class="flex flex-row justify-center mt-2 my-2">
+                <a href="{{ route('clients.index') }}" 
+                class="bg-sky-300 text-black text-xl font-semibold px-2 py-2 rounded-md">
+                    Agregar más productos
+                </a>
+            </div>
+
+            <div class="flex flex-row justify-center mt-2 my-2">
                 <form action="{{ route('cart.clear', $cart) }}" method="post">
                     @csrf
 
@@ -111,14 +137,9 @@
                 </form>
             </div>
 
-            <div class="flex flex-row justify-center mt-2 my-2">
-                <a href="{{ route('clients.index') }}" 
-                class="bg-sky-300 text-black text-sm font-semibold px-2 py-2 rounded-md">
-                    Agregar más productos
-                </a>
-            </div>
         </div>
 
     </div>
+@endif
 
 @endsection

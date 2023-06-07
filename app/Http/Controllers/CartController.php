@@ -33,14 +33,16 @@ class CartController extends Controller
 
             $cart = $user->cart;
             
-            $cartItems = $cart->cartItems->groupBy('product_id')->map(function ($items) {
+            $cartItems = $cart ? $cart->cartItems->groupBy('product_id')->map(function ($items) {
                 $item = $items->first();
                 $item->quantity = $items->sum('quantity');
                 $item->item_total_amount = $items->sum('item_total_amount');
                 return $item;
-            });
+            }) : null;
 
-            return view('cart.index', compact('cartItems', 'cart'));
+            $isEmpty = $cartItems == null || $cartItems->isEmpty();
+
+            return view('cart.index', compact('cartItems', 'cart', 'isEmpty'));
         };
     }
 
@@ -94,18 +96,7 @@ class CartController extends Controller
     
     public function clearCart(Cart $cart): RedirectResponse
     {
-        $cartItems = $cart->cartItems;
-
-        foreach ($cartItems as $cartItem) {
-            $product = $cartItem->product;
-            $quantity = $cartItem->quantity;
-            $product->increaseStock($quantity);
-            $product->updateStatus();
-        };
-        
-        $cart->cartItems()->delete();
-        $cart->total_amount = 0;
-        $cart->save();
+        $cart->clearCart();
 
         return redirect()->route('cart.index');
     }
