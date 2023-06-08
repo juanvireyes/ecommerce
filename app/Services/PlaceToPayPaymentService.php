@@ -33,9 +33,9 @@ class PlaceToPayPaymentService extends PaymentService
         $orderId = $request->order_id;
 
         $order = $orderRepository->getOrderById($orderId);
-
+        
         $result = Http::post(config('placetopay.url').'/api/session', $builtRequest->build($order));
-
+        
         if ($result->ok()) {
 
             $data = [
@@ -56,21 +56,15 @@ class PlaceToPayPaymentService extends PaymentService
     {
         $log = Log::info('Getting payment status with PlaceToPay');
 
-        // dd($log);
-
         $user = auth()->user();
 
         $lastOrder = $this->orderRepository->getUserLastOrder($user);
-
-        // dd($lastOrder);
 
         $response = Http::post(config('placetopay.url').'/api/session/'.$lastOrder->order_number, 
             [
                 'auth' => $this->placeToPayAuthAction->execute()
             ]
         );
-
-        // dd($response);
 
         if ($response->ok()) {
 
@@ -82,15 +76,12 @@ class PlaceToPayPaymentService extends PaymentService
 
                 $status = $lastOrder->status;
 
-                $message = 'Pago realizado con exito';
-
             } elseif ($status == 'REJECTED') {
 
                 $lastOrder->rejected();
 
                 $status = $lastOrder->status;
 
-                $message = 'Pago rechazado';
 
             } elseif ($status == 'CANCELLED') {
 
@@ -98,19 +89,16 @@ class PlaceToPayPaymentService extends PaymentService
 
                 $status = $lastOrder->status;
 
-                $message = 'Pago cancelado';
-
             } elseif ($status == 'APPROVED_PARTIAL') {
 
                 $lastOrder->approved();
 
                 $status = $lastOrder->status;
 
-                $message = 'Pago en espera';
             };
 
-            return view('orders.processed', compact('status'))
-                ->with('message', $message);
+            return view('orders.processed', compact('status'));
+
         };
 
         return back()->with('error', 'Error al obtener el estado del pago');

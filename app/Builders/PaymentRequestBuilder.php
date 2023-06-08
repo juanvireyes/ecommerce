@@ -2,6 +2,7 @@
 
 namespace App\Builders;
 
+use App\Actions\SetCurrencyTypeAction;
 use App\Models\Order;
 use App\Models\User;
 
@@ -22,8 +23,7 @@ class PaymentRequestBuilder
         return [$key => $value];
     }
 
-    private function createAmountArray(
-        string $currency, 
+    private function createAmountArray( 
         string|int $amount, 
         bool $tax = null, 
         string $taxKind = null,
@@ -33,6 +33,8 @@ class PaymentRequestBuilder
         string|int $detailAmount = null): array
     {
         $amountArray = [];
+
+        $currency = SetCurrencyTypeAction::execute($amount);
 
         if ($tax && $details) {
 
@@ -82,7 +84,7 @@ class PaymentRequestBuilder
             ];
         };
 
-        $amountArray[] = [
+        $amountArray = [
             'currency' => $currency,
             'total' => $amount,
         ]; 
@@ -149,10 +151,7 @@ class PaymentRequestBuilder
 
         $paymentArray = [
             'reference' => $order->id,
-            'amount' => [
-                'currency' => 'USD',
-                'total' => $order->total,
-            ],
+            'amount' => $this->createAmountArray($order->total),
             'shipping' => $this->createShippingArray($user),
             'items' => $this->createItemsArray($order),
         ];

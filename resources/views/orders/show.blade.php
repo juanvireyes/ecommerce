@@ -88,13 +88,13 @@
                         <span class="text-yellow-700 bg-gray-500 font-semibold px-3 py-2 uppercase">
                             En proceso
                         </span>
-                    @elseif($order->status == 'rejected'|'cancelled')
+                    @elseif($order->status == 'rejected')
                         <span class="text-red-500 font-bold px-3 py-3 font-bold uppercase">
                             Rechazada
                         </span>
                     @else
                         <span class="text-green-500 font-semibold font-bold uppercase">
-                            Aprobada
+                            Completada
                         </span>
                     @endif
                 </h1>

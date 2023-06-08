@@ -7,26 +7,10 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderRepository implements OrderRepositoryInterface
-{
-    public function createOrder(User $user, array $data): Order
-    {
-        $userId = $user->auth()->id();
-
-        $cart = $user->cart;
-
-        $cartTotalAmmount = $cart->total_amount;
-
-        $order = Order::create([
-            'user_id' => $userId,
-            'total' => $cartTotalAmmount,
-        ]);
-
-        return $order;
-    }
-
-    
+{    
     public function getOrderById(int $orderId): Order
     {
         return Order::findOrFail($orderId);
@@ -62,12 +46,33 @@ class OrderRepository implements OrderRepositoryInterface
     public function getUserLastOrder(User $user): Order
     {
         $userId = $user->id;
+        $orders = $user->orders;
+        $orderStatus = '';
+
+        foreach($orders as $order) {
+            $orderStatus = $order->status;
+        };
+
+        if($orderStatus == 'pending') {
+            $order = Order::query()
+            ->where('user_id' , '=' ,  $userId)
+            ->where('status' , '=' , $orderStatus)
+            ->latest()->first();
+        };
 
         $order = Order::query()
-            ->where('user_id' , '=' ,  $userId)
-            ->where('status' , '=' , 'pending')
+            ->where('status' , '!=' , 'pending')
             ->latest()->first();
 
         return $order;
+    }
+
+    public function getOrdersList(): LengthAwarePaginator
+    {
+        $orders = Order::query()
+            ->with('user')
+            ->latest()->paginate(10);
+
+        return $orders;
     }
 }

@@ -23,5 +23,12 @@
             
         @endif
 
+        <div>
+            <a href="{{ route('orders.index') }}" 
+            class="bg-yellow-500 text-black text-center font-semibold px-2 py-3 rounded-md">
+                Volver a mis órdenes
+            </a>
+        </div>
+
     </div>
 @endsection

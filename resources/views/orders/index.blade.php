@@ -47,23 +47,17 @@
                                 {{ $order->total }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                @if ($order->status == 'pending')
-                                    <span class="text-red-500 text-sm uppercase font-bold">Pendiente</span>
-                                @elseif($order->status == 'completed')
-                                    <span class="text-red-500 text-sm uppercase font-bold">Completado</span>
-                                @endif
+                                
+                                @include('orders.components.order-status')
+                                
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                <div class="flex gap-4 justify-center text-center">
-                                    <div>
-                                        <form action="{{ route('orders.payment', $order->id) }}" method="post">
-                                            @csrf
+                                <div class="flex gap-4 justify-center text-center items-center">
+                                    
+                                    <span class="bg-sky-300 text-black text-sm font-bold mx-auto px-3 py-2 rounded-full">
+                                        @include('orders.components.pay-form')
+                                    </span>
 
-                                            <input type="hidden" name="order_id" id="order_id" value="{{ $order->id }}">
-
-                                            <button type="submit">Pagar</button>
-                                        </form>
-                                    </div>
                                     <div>
                                         <a href="{{ route('orders.show', $order) }}"
                                         class="bg-yellow-400 text-black text-sm font-bold px-3 py-2 rounded-full">

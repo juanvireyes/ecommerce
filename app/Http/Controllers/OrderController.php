@@ -20,12 +20,12 @@ class OrderController extends Controller
     public function index(): View
     {
         $user = auth()->user();
+        $orders = $user->orders;
 
         if ($user->cart) {
             $order = $this->orderService->createOrder($user);
         };
 
-        $orders = $user->orders;
 
         return view('orders.index', compact('orders'));
     }
