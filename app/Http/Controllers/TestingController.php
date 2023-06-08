@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
@@ -11,14 +12,14 @@ use Illuminate\Http\Request;
 use App\Services\CartService;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use App\Builders\GeneralRequestBuilder;
 use App\Repositories\ProductRepository;
 use App\Repositories\CategoryRepository;
 use App\Actions\UpdateProductStatusAction;
 use App\Http\Requests\StoreCartItemRequest;
 use App\Repositories\SubcategoryRepository;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
-use Illuminate\Http\RedirectResponse;
 
 class TestingController extends Controller
 {
@@ -55,9 +56,11 @@ class TestingController extends Controller
 
     public function index(): View
     {
-        $products = $this->productRepository->getAllProducts();
+        $requestBuilder = new GeneralRequestBuilder();
 
-        return view('testing.testing-index', compact('products'));
+        $request = $requestBuilder->build();
+
+        return view('testing.testing-index', compact('request'));
     }
 
     public function showCartContentTest()

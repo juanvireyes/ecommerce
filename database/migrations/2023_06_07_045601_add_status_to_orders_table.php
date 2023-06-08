@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('status')->default('pending')->after('total');
+            $table->string('order_number')->nullable()->after('user_id');
+            $table->string('url')->nullable()->after('order_number');
+            $table->enum('currency', ['USD', 'EUR', 'COP'])->default('USD')->after('url');
+            $table->enum('status', ['pending', 'completed', 'approved', 'rejected', 'cancelled'])
+                    ->default('pending')->after('currency');
         });
     }
 
@@ -22,6 +26,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('order_number');
+            $table->dropColumn('url');
+            $table->dropColumn('currency');
             $table->dropColumn('status');
         });
     }

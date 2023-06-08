@@ -5,7 +5,7 @@
 @section('content')
     <div class="container mx-auto">
         <h1 class="text-red-600 text-2xl font-bold mt-4 mx-auto text-center">
-            Ordénes de compra
+            Órdenes de compra
         </h1>
 
         <div class="flex flex-row justify-center items-center text-center mt-2 py-2 mx-auto px-2">
@@ -49,15 +49,26 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                                 @if ($order->status == 'pending')
                                     <span class="text-red-500 text-sm uppercase font-bold">Pendiente</span>
+                                @elseif($order->status == 'completed')
+                                    <span class="text-red-500 text-sm uppercase font-bold">Completado</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                <div class="flex gap-4">
+                                <div class="flex gap-4 justify-center text-center">
                                     <div>
-                                        <a href="">Pagar</a>
+                                        <form action="{{ route('orders.payment', $order->id) }}" method="post">
+                                            @csrf
+
+                                            <input type="hidden" name="order_id" id="order_id" value="{{ $order->id }}">
+
+                                            <button type="submit">Pagar</button>
+                                        </form>
                                     </div>
                                     <div>
-                                        <a href="">Ver detalles</a>
+                                        <a href="{{ route('orders.show', $order) }}"
+                                        class="bg-yellow-400 text-black text-sm font-bold px-3 py-2 rounded-full">
+                                            Ver detalles
+                                        </a>
                                     </div>
                                 </div>
                             </td>

@@ -29,23 +29,4 @@ class OrderController extends Controller
 
         return view('orders.index', compact('orders'));
     }
-
-    private function getTotalAmmount(User $user): float
-    {
-        $cart = $user->cart;
-
-        $totalAmmount = $cart->total_amount;
-        
-        return $totalAmmount;
-    }
-
-    private function createOrder(User $user): Order
-    {
-        $order = Order::create([
-            'user_id' => $user->id,
-            'total_amount' => $this->getTotalAmmount($user),
-        ]);
-
-        return $order;
-    }
 }

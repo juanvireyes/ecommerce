@@ -39,4 +39,34 @@ class Order extends Model
 
         return $total;
     }
+
+    public function completed(): void
+    {
+        $this->update([
+            'status' => 'completed'
+        ]);
+    }
+
+    public function approved(): void
+    {
+        $this->update([
+            'status' => 'approved'
+        ]);
+    }
+
+    public function cancelled(): void
+    {
+        $this->update([
+            'status' => 'cancelled'
+        ]);
+    }
+
+    public function rejected(): void
+    {
+        $this->update([
+            'status' => 'rejected'
+        ]);
+    }
+
+
 }
