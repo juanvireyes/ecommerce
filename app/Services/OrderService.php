@@ -31,8 +31,6 @@ class OrderService
 
     private function getTotalAmmount(Cart $cart): float
     {
-        // $cart = $user->cart;
-
         $totalAmmount = $cart->total_amount;
         
         return $totalAmmount;
@@ -41,8 +39,6 @@ class OrderService
 
     private function createOrderDetails(Cart $cart, Order $order): void
     {
-        // $cart = $user->cart;
-
         $cartItems = $cart->cartItems;
 
         foreach ($cartItems as $cartItem) {

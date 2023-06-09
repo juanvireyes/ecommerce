@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Services\OrderService;
 use Database\Seeders\RolesSeeder;
 use Database\Seeders\PermissionsSeeder;
 use App\Http\Controllers\CartItemController;
@@ -124,8 +125,28 @@ class CartTest extends TestCase
     }
 
     /** @test */
-    public function checkout_cart(): void
+    public function checkout_cart_and_order_creation(): void
     {
-        //
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $user = User::factory()->create();
+
+        $category = Category::factory()->create();
+
+        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
+
+        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
+        $cart = Cart::factory()->create(['user_id' => $user->id]);
+        $quantity = 2;
+
+        $cartItem = CartItemController::store($cart, $product, $quantity);
+
+        $orderService = new OrderService();
+
+        $order = $orderService->createOrder($user);
+
+        $this->assertDatabaseHas('orders', ['user_id' => $user->id]);
+        $this->assertDatabaseHas('order_details', ['order_id' => $order->id]);
     }
 }
