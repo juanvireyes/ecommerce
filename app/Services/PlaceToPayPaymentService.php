@@ -89,7 +89,7 @@ class PlaceToPayPaymentService extends PaymentService
 
                 $status = $lastOrder->status;
 
-            } elseif ($status == 'APPROVED_PARTIAL') {
+            } elseif ($status == 'PENDING') {
 
                 $lastOrder->approved();
 
