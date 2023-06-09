@@ -11,7 +11,7 @@
     <div class="container mx-auto">
         
         <div>
-            {{ json_encode($request) }}
+            {{ $response }}
         </div>
 
     </div>

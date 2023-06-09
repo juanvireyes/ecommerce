@@ -23,7 +23,7 @@
             
         @endif
 
-        <div>
+        <div class="mt-4 py-2">
             <a href="{{ route('orders.index') }}" 
             class="bg-yellow-500 text-black text-center font-semibold px-2 py-3 rounded-md">
                 Volver a mis órdenes

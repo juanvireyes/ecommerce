@@ -5,10 +5,8 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\User;
 use App\Models\Order;
-use App\Models\CartItem;
 use App\Models\OrderDetail;
-use App\Repositories\OrderRepository;
-use Illuminate\Database\Eloquent\Collection;
+
 
 class OrderService
 {
@@ -16,14 +14,14 @@ class OrderService
     {
         $cart = $user->cart;
 
-        $totalAmmount = $this->getTotalAmmount($user);
+        $totalAmmount = $this->getTotalAmmount($cart);
 
         $order = Order::create([
             'user_id' => $user->id,
             'total' => $totalAmmount
         ]);
 
-        $this->createOrderDetails($user,$order);
+        $this->createOrderDetails($cart, $order);
 
         $cart->delete();
 
@@ -31,9 +29,9 @@ class OrderService
     }
 
 
-    private function getTotalAmmount(User $user): float
+    private function getTotalAmmount(Cart $cart): float
     {
-        $cart = $user->cart;
+        // $cart = $user->cart;
 
         $totalAmmount = $cart->total_amount;
         
@@ -41,9 +39,9 @@ class OrderService
     }
 
 
-    private function createOrderDetails(User $user, Order $order): void
+    private function createOrderDetails(Cart $cart, Order $order): void
     {
-        $cart = $user->cart;
+        // $cart = $user->cart;
 
         $cartItems = $cart->cartItems;
 

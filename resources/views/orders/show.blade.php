@@ -80,23 +80,9 @@
             <div class="justify-center">
                 <h1 class="text-red-600 text-xl font-bold uppercase px-3 py-2">
                     Estado de la orden:
-                    @if ($order->status == 'pending')
-                        <span class="text-red-500 font-semibold uppercase">
-                            Pendiente
-                        </span>
-                    @elseif($order->status == 'approved')
-                        <span class="text-yellow-700 bg-gray-500 font-semibold px-3 py-2 uppercase">
-                            En proceso
-                        </span>
-                    @elseif($order->status == 'rejected')
-                        <span class="text-red-500 font-bold px-3 py-3 font-bold uppercase">
-                            Rechazada
-                        </span>
-                    @else
-                        <span class="text-green-500 font-semibold font-bold uppercase">
-                            Completada
-                        </span>
-                    @endif
+                    
+                    @include('orders.components.order-status')
+
                 </h1>
             </div>
 
@@ -106,6 +92,10 @@
                     Volver al listado de órdenes
                 </a>
             </div>
+
+            <span class="mt-4 bg-sky-400 text-black text-medium font-bold px-3 py-3 rounded-md">
+                @include('orders.components.pay-form')
+            </span>
 
         </div>
     </div>

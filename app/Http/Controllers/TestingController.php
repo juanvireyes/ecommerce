@@ -19,6 +19,7 @@ use App\Repositories\CategoryRepository;
 use App\Actions\UpdateProductStatusAction;
 use App\Http\Requests\StoreCartItemRequest;
 use App\Repositories\SubcategoryRepository;
+use App\Services\ExchangeCurrencyService;
 use Illuminate\Database\Eloquent\Casts\Json;
 
 class TestingController extends Controller
@@ -56,11 +57,15 @@ class TestingController extends Controller
 
     public function index(): View
     {
-        $requestBuilder = new GeneralRequestBuilder();
+        $fromCurrency = 'COP';
+        $toCurrency = 'USD';
+        $ammount = 350000;
 
-        $request = $requestBuilder->build();
+        $response = new ExchangeCurrencyService();
 
-        return view('testing.testing-index', compact('request'));
+        $response = $response->exchange($fromCurrency, $toCurrency, $ammount);
+
+        return view('testing.testing-index', compact('response'));
     }
 
     public function showCartContentTest()

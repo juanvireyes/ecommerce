@@ -5,6 +5,7 @@ namespace App\Builders;
 use App\Actions\SetCurrencyTypeAction;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\ExchangeCurrencyService;
 
 class PaymentRequestBuilder
 {
@@ -35,6 +36,16 @@ class PaymentRequestBuilder
         $amountArray = [];
 
         $currency = SetCurrencyTypeAction::execute($amount);
+        
+        if ($currency == 'COP') {
+
+            $toCurrency = 'USD';
+
+            $amount = ExchangeCurrencyService::exchange($currency, $toCurrency, $amount);
+
+            $currency = SetCurrencyTypeAction::execute($amount);
+
+        }
 
         if ($tax && $details) {
 

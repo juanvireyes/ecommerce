@@ -54,9 +54,13 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                                 <div class="flex gap-4 justify-center text-center items-center">
                                     
-                                    <span class="bg-sky-300 text-black text-sm font-bold mx-auto px-3 py-2 rounded-full">
-                                        @include('orders.components.pay-form')
-                                    </span>
+                                    @if ($order->status != 'completed')
+
+                                        <span class="bg-sky-300 text-black text-sm font-bold mx-auto px-3 py-2 rounded-full">
+                                            @include('orders.components.pay-form')
+                                        </span>
+                                    
+                                    @endif
 
                                     <div>
                                         <a href="{{ route('orders.show', $order) }}"
