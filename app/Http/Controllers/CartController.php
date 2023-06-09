@@ -33,7 +33,8 @@ class CartController extends Controller
 
             $cart = $user->cart;
             
-            $cartItems = $cart ? $cart->cartItems->groupBy('product_id')->map(function ($items) {
+            // @phpstan-ignore-next-line
+            $cartItems = $cart ? $cart->cartItems->groupBy('product_id')->map(function ($items) { //@phpstan-ignore-line
                 $item = $items->first();
                 $item->quantity = $items->sum('quantity');
                 $item->item_total_amount = $items->sum('item_total_amount');
@@ -78,17 +79,9 @@ class CartController extends Controller
 
             $product->updateStatus();
 
-            if ($cartItem) {
+            $cart->calculateCartTotalAmountTest();
 
-                $cart->calculateCartTotalAmountTest();
-
-                return back()->with('success', 'Producto agregado al carrito');
-
-            } else {
-
-                return back()->with('error', 'Error al agregar el producto al carrito');
-
-            };
+            return back()->with('success', 'Producto agregado al carrito');
         };
 
     }

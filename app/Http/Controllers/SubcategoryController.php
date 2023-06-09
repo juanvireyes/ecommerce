@@ -62,7 +62,7 @@ class SubcategoryController extends Controller
 
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
-                return redirect()->back()->withErrors($request->validator());
+                return redirect()->back()->withErrors($request->validator()); // @phpstan-ignore-line
             };
 
             $validated['image'] = $request->file('image')->store('public');

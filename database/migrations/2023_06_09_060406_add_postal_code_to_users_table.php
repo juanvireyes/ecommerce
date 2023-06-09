@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->integer('order_number')->change();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('zip', 7)->nullable()->after('state');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->string('order_number')->change();
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('zip');
         });
     }
 };

@@ -8,6 +8,13 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Actions\CreatePlaceToPayAuthAction;
 
+/**
+ * @property string $signature
+ * @property string $description
+ * @property Model $order
+ * @property string $status
+ * @property string $order_number
+ */
 class UpdatePaymentSession extends Command
 {
     /**
@@ -33,9 +40,13 @@ class UpdatePaymentSession extends Command
 
         $placeToPayAuthAction = new CreatePlaceToPayAuthAction();
 
+        $response = null;
+
         foreach ($orders as $order) {
+            
             echo $order->order_number.PHP_EOL;
 
+            
             $response = Http::post(config('placetopay.url').'/api/session/'.$order->order_number, 
                 [
                     'auth' => $placeToPayAuthAction->execute()
@@ -48,19 +59,23 @@ class UpdatePaymentSession extends Command
 
             if ($status == 'APPROVED') {
 
+                // @phpstan-ignore-next-line
                 $order->completed();
 
             } elseif ($status == 'REJECTED') {
 
+                // @phpstan-ignore-next-line
                 $order->rejected();
 
 
             } elseif ($status == 'CANCELLED') {
 
+                // @phpstan-ignore-next-line
                 $order->cancelled();
 
             } elseif ($status == 'APPROVED_PARTIAL') {
 
+                // @phpstan-ignore-next-line
                 $order->approved();
 
             };

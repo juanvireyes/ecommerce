@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $cart_id
+ * @property int $product_id
+ * @property string $product_name
+ * @property int $quantity
+ * @property float $price
+ * @property float $item_total_amount
+ * @property Cart $cart
+ * @property Product $product
+ */
 class CartItem extends Model
 {
     use HasFactory;

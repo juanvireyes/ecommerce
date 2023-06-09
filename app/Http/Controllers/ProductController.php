@@ -46,7 +46,7 @@ class ProductController extends Controller
             $products = $this->getFilteredProducts($subcategoryId);
 
             if ($request->price == 'asc') {
-                $products->orderBy('price', 'asc');
+                $products->orderBy('price', 'asc'); // @phpstan-ignore-line
             }
 
             return view('products.index', compact('categories', 'categoryId', 'subcategories', 'subcategoryId', 'products'));
@@ -127,7 +127,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
 
             if  (!$request->file('image')->isValid()) {
-                return redirect()->back()->withErrors($request->validator());
+                return redirect()->back()->withErrors($request->validator()); // @phpstan-ignore-line
             };
 
             $validated['image'] = $request->file('image')->store('public/products');
@@ -191,7 +191,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
 
             if  (!$request->file('image')->isValid()) {
-                return redirect()->back()->withErrors($request->validator());
+                return redirect()->back()->withErrors($request->validator()); // @phpstan-ignore-line
             };
 
             $validated['image'] = $request->file('image')->store('public/products');

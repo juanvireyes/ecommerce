@@ -19,23 +19,41 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_see_products_list(): void
+    private User $user;
+    private Role $admin_role;
+    private Role $superadmin_role;
+    private Role $client_role;
+    private Category $category;
+    private int $subcategoryId;
+    private Product $product;
+
+    public function setUp(): void
     {
+        parent::setUp();
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
+        $this->admin_role = Role::where('name', 'admin')->first(); // @phpstan ignore-line
+        $this->superadmin_role = Role::where('name', 'superadmin')->first(); // @phpstan ignore-line
+        $this->client_role = Role::where('name', 'client')->first(); // @phpstan ignore-line
 
-        $role = Role::findByName('admin')->first();
-        $permission = Permission::whereIn('name', ['view products', 'edit products', 'delete products'])->get();
+        $this->user = User::factory()->create();
 
-        $role->givePermissionTo($permission);
+        $categoryId = Category::factory()->create()->id;
 
-        $user = User::factory()->create();
+        $this->subcategoryId = Subcategory::factory()->create(['category_id' => $categoryId])->id;
 
-        $user->assignRole($role);
+        $this->product = Product::factory()->create(['subcategory_id' => $this->subcategoryId]);
+    }
 
-        $this->assertTrue($user->hasRole($role));
+    public function test_admin_can_see_products_list(): void
+    {
+        $role = $this->admin_role;
 
-        $this->actingAs($user);
+        $this->user->assignRole($role);
+
+        $this->assertTrue($this->user->hasRole($role));
+
+        $this->actingAs($this->user);
 
         $response = $this->get(route('products.index'));
 
@@ -45,18 +63,14 @@ class ProductTest extends TestCase
 
     public function test_superadmin_can_see_products_list(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->superadmin_role;
 
-        $role = Role::findByName('superadmin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
         $response = $this->get(route('products.index'));
 
         $response->assertStatus(200);
@@ -65,18 +79,14 @@ class ProductTest extends TestCase
 
     public function test_client_cannot_see_management_products_list(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->client_role;
 
-        $role = Role::where('name', 'client')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
+        $this->actingAs($this->user);
+        
         $response = $this->get(route('products.index'));
 
         $response->assertStatus(403);
@@ -84,18 +94,14 @@ class ProductTest extends TestCase
 
     public function test_admin_can_see_product_create_form(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
         $response = $this->get(route('products.create'));
 
         $response->assertStatus(200);
@@ -104,18 +110,14 @@ class ProductTest extends TestCase
 
     public function test_superadmin_can_see_product_create_form(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->superadmin_role;
 
-        $role = Role::findByName('superadmin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
         $response = $this->get(route('products.create'));
 
         $response->assertStatus(200);
@@ -124,18 +126,14 @@ class ProductTest extends TestCase
 
     public function test_client_cannot_see_product_create_form(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->client_role;
 
-        $role = Role::where('name', 'client')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
         $response = $this->get(route('products.create'));
 
         $response->assertStatus(403);
@@ -143,18 +141,13 @@ class ProductTest extends TestCase
 
     public function test_admin_can_create_product_with_image(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
+        $this->actingAs($this->user);
 
         $file = UploadedFile::fake()->image('test.jpg');
 
@@ -164,7 +157,7 @@ class ProductTest extends TestCase
             'description' => 'Test description',
             'price' => '100',
             'image' => $file,
-            'subcategory_id' => Subcategory::factory()->create()->id,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => '1'
@@ -187,18 +180,13 @@ class ProductTest extends TestCase
 
     public function test_superadmin_can_create_product_with_image(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->superadmin_role;
 
-        $role = Role::findByName('superadmin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
+        $this->actingAs($this->user);
 
         $file = UploadedFile::fake()->image('test.jpg');
 
@@ -208,7 +196,7 @@ class ProductTest extends TestCase
             'description' => 'Test description',
             'price' => '100',
             'image' => $file,
-            'subcategory_id' => Subcategory::factory()->create()->id,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => '1'
@@ -231,18 +219,13 @@ class ProductTest extends TestCase
 
     public function test_product_cannot_be_created_with_invalid_image_format(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
+        $this->actingAs($this->user);
 
         $file = UploadedFile::fake()->image('test.pdf');
 
@@ -252,7 +235,7 @@ class ProductTest extends TestCase
             'description' => 'Test description',
             'price' => '100',
             'image' => $file,
-            'subcategory_id' => Subcategory::factory()->create()->id,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => '1'
@@ -264,25 +247,20 @@ class ProductTest extends TestCase
 
     public function test_product_can_be_created_without_image(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
+        $this->actingAs($this->user);
 
         $response = $this->post(route('product.store'), [
             'name' => 'Test product',
             'slug' => 'test-product',
             'description' => 'Test description',
             'price' => '100',
-            'subcategory_id' => Subcategory::factory()->create()->id,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => '1'
@@ -305,24 +283,15 @@ class ProductTest extends TestCase
 
     public function test_edit_product_form_can_be_seen_by_superadmin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->superadmin_role;
 
-        $role = Role::findByName('superadmin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
-
-        $this->actingAs($user);
-
-        $response = $this->get(route('products.edit', $product->id));
+        $response = $this->get(route('products.edit', $this->product->id));
         
         $response->assertStatus(200);
         $response->assertViewIs('products.edit');
@@ -330,24 +299,15 @@ class ProductTest extends TestCase
 
     public function test_edit_product_form_can_be_seen_by_admin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
-
-        $this->actingAs($user);
-
-        $response = $this->get(route('products.edit', $product->id));
+        $response = $this->get(route('products.edit', $this->product->id));
         
         $response->assertStatus(200);
         $response->assertViewIs('products.edit');
@@ -355,55 +315,38 @@ class ProductTest extends TestCase
 
     public function test_edit_product_form_cannot_be_seen_by_client(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->client_role;
 
-        $role = Role::where('name', 'client')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
-
-        $this->actingAs($user);
-
-        $response = $this->get(route('products.edit', $product->id));
+        $response = $this->get(route('products.edit', $this->product->id));
         
         $response->assertStatus(403);
     }
 
     public function test_product_info_can_be_updated(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
+        $this->actingAs($this->user);
 
         $file = UploadedFile::fake()->image('test.jpg');
 
-        $response = $this->put(route('products.update', $product->id), [
+        $response = $this->put(route('products.update', $this->product->id), [
             'name' => 'Test product',
             'slug' => 'test-product',
             'description' => 'Test description',
             'price' => '100',
             'image' => $file,
-            'subcategory_id' => $subcategoryId,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => 1
@@ -415,28 +358,20 @@ class ProductTest extends TestCase
 
     public function test_product_info_can_be_updated_without_image(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
-
-        $response = $this->put(route('products.update', $product->id), [
+        $response = $this->put(route('products.update', $this->product->id), [
             'name' => 'Test product',
             'slug' => 'test-product',
             'description' => 'Test description',
             'price' => '100',
-            'subcategory_id' => $subcategoryId,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => 1
@@ -448,31 +383,23 @@ class ProductTest extends TestCase
 
     public function test_product_info_cannot_be_updated_with_invalid_image_format(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->admin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
-
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
+        $this->actingAs($this->user);
 
         $file = UploadedFile::fake()->image('test.pdf');
 
-        $response = $this->put(route('products.update', $product->id), [
+        $response = $this->put(route('products.update', $this->product->id), [
             'name' => 'Test product',
             'slug' => 'test-product',
             'description' => 'Test description',
             'price' => '100',
             'image' => $file,
-            'subcategory_id' => $subcategoryId,
+            'subcategory_id' => $this->subcategoryId,
             'stock' => '100',
             'active' => true,
             'order' => 1
@@ -484,23 +411,15 @@ class ProductTest extends TestCase
 
     public function test_product_can_be_deleted_by_superadmin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $role = $this->superadmin_role;
 
-        $role = Role::findByName('admin')->first();
+        $this->user->assignRole($role);
 
-        $user = User::factory()->create();
+        $this->assertTrue($this->user->hasRole($role));
 
-        $user->assignRole($role);
+        $this->actingAs($this->user);
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
-        $subcategoryId = Subcategory::factory()->create()->id;
-
-        $product = Product::factory()->create();
-
-        $response = $this->delete(route('products.destroy', $product->id));
+        $response = $this->delete(route('products.destroy', $this->product->id));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('products.index'));

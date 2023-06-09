@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string $description
+ * @property string $image
+ * @property float $price
+ * @property int $stock
+ * @property bool $active
+ * @property int $order
+ * @property int $subcategory_id
+ * @property-read Subcategory $subcategory
+ */
 class Product extends Model
 {
     use HasFactory;

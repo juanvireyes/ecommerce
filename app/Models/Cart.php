@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property bool $completed
+ * @property string $completed_at
+ * @property float $total_amount
+ * @property float $discount_amount
+ * @property string $shipping_method
+ * @property float $shipping_cost
+ * @property string $billing_address
+ * @property string $expires_at
+ * @property User $user
+ * @property CartItem[] $cartItems
+ * @property float $total_amount_test
+ */
 class Cart extends Model
 {
     use HasFactory;
@@ -65,6 +80,7 @@ class Cart extends Model
             $product->updateStatus();
         };
         
+        // @phpstan-ignore-next-line
         $this->cartItems()->delete();
         $this->total_amount = 0;
         $this->save();

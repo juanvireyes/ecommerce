@@ -8,7 +8,7 @@ class SetCurrencyTypeAction
     {
         $ammountLenght = strlen((string)$ammount);
 
-        if ($ammountLenght >= 6) {
+        if ($ammountLenght >= 10) {
 
             return 'COP';
 
@@ -17,7 +17,5 @@ class SetCurrencyTypeAction
             return 'USD';
 
         };
-
-        return 'EUR';
     }
 }

@@ -59,11 +59,6 @@ class HomeController extends Controller
         return $category->subCategories()->get()->sortBy('order')->toArray();
     }
 
-    private function getProducts(Subcategory $subcategory): array
-    {
-        return $subcategory->products()->get()->sortBy('order')->toArray();
-    }
-
     public function user_info(): View
     {
         return view('user-info');

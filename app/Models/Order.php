@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property float $total
+ * @property string $order_number
+ * @property string $url
+ * @property string $currency
+ * @property string $status
+ * @property User $user
+ * @property OrderDetail[] $orderItems
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class Order extends Model
 {
     use HasFactory;

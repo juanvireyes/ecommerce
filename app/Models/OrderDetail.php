@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $order_id
+ * @property int $product_id
+ * @property string $product_name
+ * @property int $quantity
+ * @property float $price
+ * @property float $product_total
+ * @property Order $order
+ * @property Product $product
+ */
 class OrderDetail extends Model
 {
     use HasFactory;

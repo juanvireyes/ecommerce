@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderDetail;
 
-
+/**
+ * @property Cart $cart
+ */
 class OrderService
 {
     public function createOrder(User $user): Order

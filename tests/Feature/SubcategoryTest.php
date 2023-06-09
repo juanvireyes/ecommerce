@@ -17,18 +17,36 @@ class SubcategoryTest extends TestCase
 {
     use RefreshDatabase;
     
-    public function test_ssubcategories_index_page_can_be_rendered_as_admin(): void
+    private User $user;
+    private Role $admin_role;
+    private Role $superadmin_role;
+    private Role $client_role;
+    private Category $category;
+    private int $categoryId;
+
+    public function setUp(): void
     {
+        parent::setUp();
         $this->seed(RolesSeeder::class);
         $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'admin')->first();
+        $this->admin_role = Role::where('name', 'admin')->first(); // @phpstan ignore-line
+        $this->superadmin_role = Role::where('name', 'superadmin')->first(); // @phpstan ignore-line
+        $this->client_role = Role::where('name', 'client')->first(); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->user = User::factory()->create();
 
-        $this->assertTrue($user->hasRole($role));
+        $this->category = Category::factory()->create()->id();
+        $this->categoryId = $this->category->id;
+    }
 
-        $this->actingAs($user);
+    public function test_ssubcategories_index_page_can_be_rendered_as_admin(): void
+    {
+        $this->user->assignRole($this->admin_role); // @phpstan ignore-line
+
+        $this->assertTrue($this->user->hasRole($this->admin_role)); // @phpstan ignore-line
+
+        $this->actingAs($this->user);
+
         $response = $this->get(route('subcategories.index'));
 
         $response->assertStatus(200);
@@ -37,16 +55,12 @@ class SubcategoryTest extends TestCase
 
     public function test_subcategories_index_page_can_be_rendered_as_superadmin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'superadmin')->first();
+        $this->user->assignRole($this->superadmin_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->superadmin_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
+        $this->actingAs($this->user);
 
-        $this->actingAs($user);
         $response = $this->get(route('subcategories.index'));
 
         $response->assertStatus(200);
@@ -55,16 +69,12 @@ class SubcategoryTest extends TestCase
 
     public function test_subcategories_index_page_cant_be_rendered_as_client(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'client')->first();
+        $this->user->assignRole($this->client_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->client_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
+        $this->actingAs($this->user);
 
-        $this->actingAs($user);
         $response = $this->get(route('subcategories.index'));
 
         $response->assertStatus(403);
@@ -72,16 +82,12 @@ class SubcategoryTest extends TestCase
 
     public function test_create_subcategory_page_can_be_rendered_as_admin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'admin')->first();
+        $this->user->assignRole($this->admin_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->admin_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
+        $this->actingAs($this->user);
 
-        $this->actingAs($user);
         $response = $this->get(route('subcategories.create'));
 
         $response->assertStatus(200);
@@ -90,16 +96,12 @@ class SubcategoryTest extends TestCase
 
     public function test_create_subcategory_page_can_be_rendered_as_superadmin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'superadmin')->first();
+        $this->user->assignRole($this->superadmin_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->superadmin_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
+        $this->actingAs($this->user);
 
-        $this->actingAs($user);
         $response = $this->get(route('subcategories.create'));
 
         $response->assertStatus(200);
@@ -108,16 +110,12 @@ class SubcategoryTest extends TestCase
 
     public function test_create_subcategory_page_cant_be_rendered_as_client(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'client')->first();
+        $this->user->assignRole($this->client_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->client_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
+        $this->actingAs($this->user);
 
-        $this->actingAs($user);
         $response = $this->get(route('subcategories.create'));
 
         $response->assertStatus(403);
@@ -125,26 +123,21 @@ class SubcategoryTest extends TestCase
 
     public function test_subcategory_can_be_created_as_admin(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-        $role = Role::where('name', 'admin')->first();
+        $this->user->assignRole($this->admin_role); // @phpstan ignore-line
 
-        $user = User::factory()->create();
-        $user->assignRole($role);
+        $this->assertTrue($this->user->hasRole($this->admin_role)); // @phpstan ignore-line
 
-        $this->assertTrue($user->hasRole($role));
-
-        $this->actingAs($user);
-
+        $this->actingAs($this->user);
+        
         $file = UploadedFile::fake()->image('image.jpg');
-        $category = Category::factory()->create();
+        
         $response = $this->post(route('subcategory.store'), [
             'name' => 'Test Subcategory',
             'slug' => 'test-subcategory',
             'description' => 'test',
             'image' => $file,
             'order' => 1,
-            'category_id' => $category->id,
+            'category_id' => $this->categoryId,
         ]);
 
         $response->assertStatus(302);
@@ -155,7 +148,7 @@ class SubcategoryTest extends TestCase
             'slug' => 'test-subcategory',
             'description' => 'test',
             'order' => 1,
-            'category_id' => $category->id,
+            'category_id' => $this->categoryId,
         ]);
     }
 }

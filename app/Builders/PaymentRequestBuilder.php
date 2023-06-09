@@ -7,25 +7,30 @@ use App\Models\Order;
 use App\Models\User;
 use App\Services\ExchangeCurrencyService;
 
+/**
+ * @property Order $order
+ * @property User $user
+ * @property Subcategory $subcategory
+ * @property Product $product
+ * @property string $description
+ * @property string $reference
+ * @property string $email
+ * @property string $phone
+ * @property string $address
+ * @property string $city
+ * @property string $state
+ * @property string $country
+ * @property string $zip
+ * @property string $amount
+ * @property string $tax
+ * @property string $taxKind
+ * @property string $taxAmount
+ * @property string $detail
+ */
 class PaymentRequestBuilder
 {
-    private function addField(string $key, string $value): string
-    {
-        return $key . ':' . $value;
-    }
-
-    private function removeField(string $key, string $value): string
-    {
-        return $key . ':' . $value;
-    }
-
-    private function addArrayField(string $key, array $value): array
-    {
-        return [$key => $value];
-    }
-
     private function createAmountArray( 
-        string|int $amount, 
+        float|int $amount, 
         bool $tax = null, 
         string $taxKind = null,
         string|int $taxAmount = null, 
@@ -107,20 +112,20 @@ class PaymentRequestBuilder
     {
         if ($user) {
             return [
-                'document' => $user->id_number,
-                'documentType' => 'CC',
-                'name' => $user->first_name,
-                'surname' => $user->last_name,
+                'document' => $user->id_number, 
+                'documentType' => 'CC', 
+                'name' => $user->first_name, 
+                'surname' => $user->last_name, 
                 'company' => null,
-                'email' => $user->email,
-                'mobile' => $user->cellphone,
+                'email' => $user->email, 
+                'mobile' => $user->cellphone, 
                 'address' => [
-                    'street' => $user->address,
-                    'city' => $user->city,
-                    'state' => $user->state,
-                    'postalCode' => $user->zip,
-                    'country' => $user->country,
-                    'phone' => $user->cellphone,
+                    'street' => $user->address, 
+                    'city' => $user->city, 
+                    'state' => $user->state, 
+                    'postalCode' => $user->zip, 
+                    'country' => $user->country, 
+                    'phone' => $user->cellphone, 
                 ],
             ];
         };
@@ -151,9 +156,9 @@ class PaymentRequestBuilder
                 'tax' => $tax,
             ];
 
-            return $itemArray;
         };
 
+        return $itemArray;
     }
 
     public function build(Order $order, User $user = null): array
@@ -161,7 +166,7 @@ class PaymentRequestBuilder
         $paymentArray = [];
 
         $paymentArray = [
-            'reference' => $order->id,
+            'reference' => $order->id, 
             'amount' => $this->createAmountArray($order->total),
             'shipping' => $this->createShippingArray($user),
             'items' => $this->createItemsArray($order),

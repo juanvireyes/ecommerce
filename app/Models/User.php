@@ -15,6 +15,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $name
+ * @property string $id_number
+ * @property string $email
+ * @property string $password
+ * @property string $cellphone
+ * @property string $address
+ * @property string $city
+ * @property string $state
+ * @property string $zip
+ * @property string $country
+ * @property bool $is_active
+ */
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -35,6 +52,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'address',
         'city',
         'state',
+        'zip',
         'country',
         'is_active'
     ];
