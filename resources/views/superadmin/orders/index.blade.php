@@ -8,6 +8,12 @@
             Tabla de órdenes de {{ $user->name }}
         </h1>
 
+        @if (session()->has('success'))
+            <div class="alert alert-success text-green-500 text-sm text-center font-bold">
+                {{ session('success') }}
+            </div>
+        @endif
+
         @if (count($user->orders) < 1)
             <div class="flex flex-row justify-center items-center">
                 <h1 class="bg-yellow-500 text-black text-center text-xl px-3 py-3 font-bold">
