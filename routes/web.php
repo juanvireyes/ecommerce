@@ -18,6 +18,7 @@ use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ClientSubcategoryController;
+use App\Http\Controllers\OrderAdminController;
 use Faker\Provider\ar_EG\Payment;
 
 Route::controller(HomeController::class)->group(function () {
@@ -51,6 +52,8 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(fu
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');
     Route::get('users/{user}', [SuperadminController::class, 'edit'])->name('users.edit');
     Route::put('users/{user}', [SuperadminController::class, 'update'])->name('users.update');
+    Route::get('user/{user}/orders', [OrderAdminController::class, 'index'])->name('user.orders');
+    Route::delete('user/{user}/orders/{id}', [OrderAdminController::class, 'destroy'])->name('user.orders.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Category'])->group( function () {

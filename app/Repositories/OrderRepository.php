@@ -17,9 +17,18 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
 
-    public function getAllOrders(User $user): Collection
+    public function getAllOrders(User $user): LengthAwarePaginator
     {
-        return $user->orders()->orderBy('created_at', 'desc')->get();
+        $userId = $user->id;
+        
+        $orders = Order::query()
+        ->where('user_id', '=', $userId)
+        ->with('user')
+        ->with('orderItems')
+        ->latest()
+        ->paginate(10);
+
+        return $orders;
     }
 
 

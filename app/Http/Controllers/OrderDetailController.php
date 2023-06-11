@@ -11,6 +11,8 @@ class OrderDetailController extends Controller
     {
         $orderItems = $order->orderItems;
 
-        return view('orders.show', compact('order', 'orderItems'));
+        $user = auth()->user();
+
+        return view('orders.show', compact('order', 'orderItems', 'user'));
     }
 }

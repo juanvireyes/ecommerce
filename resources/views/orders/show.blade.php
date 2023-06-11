@@ -87,16 +87,38 @@
             </div>
 
             <div class="justify-center mt-2">
-                <a href="{{ route('orders.index') }}"
-                class="bg-sky-300 tex-black text-md font-bold px-3 py-2 rounded-md">
-                    Volver al listado de órdenes
-                </a>
+                @if ($user->hasRole(['superadmin']))
+                    <a href="{{ route('user.orders', $order->user) }}"
+                    class="bg-sky-300 tex-black text-md font-bold px-3 py-2 rounded-md">
+                        Volver al listado de órdenes
+                    </a>    
+                @else
+                    <a href="{{ route('orders.index') }}"
+                    class="bg-sky-300 tex-black text-md font-bold px-3 py-2 rounded-md">
+                        Volver al listado de órdenes
+                    </a>
+                @endif
             </div>
 
             @if ($order->status != 'completed' && $order->status != 'approved')
                 <span class="mt-4 bg-sky-400 text-black text-medium font-bold px-3 py-3 rounded-md">
                     @include('orders.components.pay-form')
                 </span>
+            @endif
+
+            @if ($user->hasRole(['superadmin']) && $order->status != 'completed')
+                <form action="{{ route('user.orders.destroy', ['user' => $user, 'id' => $order->id]) }}" method="post">
+                
+                    @csrf
+                    @method('DELETE')
+
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+
+                    <button type="submit" class="bg-yellow-400 hover:bg-red-500 text-black text-md font-semibold">
+                        Eliminar orden
+                    </button>
+
+                </form>
             @endif
 
         </div>
