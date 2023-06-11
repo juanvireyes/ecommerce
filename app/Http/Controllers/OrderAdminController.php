@@ -75,7 +75,8 @@ class OrderAdminController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $order = Order::find($request->order_id);
+        $order = Order::with('orderItems')->find($request->order_id);
+        $user = $order->user;
         $orderItems = $order->orderItems;
         $product = null;
 
@@ -99,6 +100,6 @@ class OrderAdminController extends Controller
         Log::info('El producto fue actualizado');
         Log::info('El nuevo stock es: ' . $product->stock);
 
-        return redirect()->route('user.orders');
+        return redirect()->route('user.orders', compact('user'))->with('success', 'Pedido eliminado');
     }
 }
