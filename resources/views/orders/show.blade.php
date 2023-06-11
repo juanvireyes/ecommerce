@@ -93,9 +93,11 @@
                 </a>
             </div>
 
-            <span class="mt-4 bg-sky-400 text-black text-medium font-bold px-3 py-3 rounded-md">
-                @include('orders.components.pay-form')
-            </span>
+            @if ($order->status != 'completed' && $order->status != 'approved')
+                <span class="mt-4 bg-sky-400 text-black text-medium font-bold px-3 py-3 rounded-md">
+                    @include('orders.components.pay-form')
+                </span>
+            @endif
 
         </div>
     </div>

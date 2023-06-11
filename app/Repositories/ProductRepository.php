@@ -15,13 +15,6 @@ class ProductRepository implements ProductRepositoryInterface
 {
     private $cacheKey = 'products';
 
-    private $subcategoryRepository;
-
-    public function __construct(SubcategoryRepository $subcategoryRepository)
-    {
-        $this->subcategoryRepository = $subcategoryRepository;
-    }
-
     public function getAllProducts(): LengthAwarePaginator
     {
         $products = Cache::remember($this->cacheKey, 15, function () {

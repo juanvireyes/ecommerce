@@ -2,11 +2,11 @@
 
 namespace App\Actions;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Order;
 
 class OrderUpdateAction
 {
-    public static function execute(Model $order): void
+    public static function execute(Order $order): void
     {
         $order->save();
     }

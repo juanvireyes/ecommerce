@@ -13,29 +13,31 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RolesSeeder::class);
+    }
+
     public function test_profile_page_is_displayed(): void
     {
-        $this->seed(RolesSeeder::class);
-        $role = Role::where('name', 'client');
         $user = User::factory()->create();
     
 
         $response = $this
             ->actingAs($user)
-            ->get('/profile');
+            ->get(route('profile.edit'));
 
         $response->assertOk();
     }
 
     public function test_profile_information_can_be_updated(): void
     {
-        $this->seed(RolesSeeder::class);
-        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch(route('profile.edit'), [
                 'first_name' => 'Test',
                 'last_name' => 'User',
                 'name' => 'Test User',
@@ -49,7 +51,7 @@ class ProfileTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit'));
 
         $user->refresh();
 
@@ -60,13 +62,11 @@ class ProfileTest extends TestCase
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
     {
-        $this->seed(RolesSeeder::class);
-        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
+            ->patch(route('profile.edit'), [
                 'first_name' => 'Test',
                 'last_name' => 'User',
                 'name' => 'Test User',
@@ -80,26 +80,24 @@ class ProfileTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit'));
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
 
     public function test_user_can_delete_their_account(): void
     {
-        $this->seed(RolesSeeder::class);
-        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
-            ->delete('/profile', [
+            ->delete(route('profile.destroy'), [
                 'password' => 'password',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/');
+            ->assertRedirect(route('clients.index'));
 
         $this->assertGuest();
         $this->assertNull($user->fresh());
@@ -107,20 +105,18 @@ class ProfileTest extends TestCase
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {
-        $this->seed(RolesSeeder::class);
-        $role = Role::where('name', 'client');
         $user = User::factory()->create();
 
         $response = $this
             ->actingAs($user)
-            ->from('/profile')
-            ->delete('/profile', [
+            ->from(route('profile.edit'))
+            ->delete(route('profile.destroy'), [
                 'password' => 'wrong-password',
             ]);
 
         $response
             ->assertSessionHasErrorsIn('userDeletion', 'password')
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit'));
 
         $this->assertNotNull($user->fresh());
     }

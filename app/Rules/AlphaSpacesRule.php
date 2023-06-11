@@ -16,7 +16,7 @@ class AlphaSpacesRule implements ValidationRule
     {
         //
         if (! preg_match('/^[\pL\s]+$/u', $value)) {
-            return $fail(__('validation.alpha_spaces'));
+            $fail(__('validation.alpha_spaces'));
         }
     }
 

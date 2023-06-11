@@ -50,7 +50,6 @@ class SuperadminController extends Controller
      */
     public function edit(string $id): View
     {
-        //
         $user = User::findOrFail($id);
 
         $this->authorize('update', $user);

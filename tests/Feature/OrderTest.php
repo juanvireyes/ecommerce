@@ -21,12 +21,20 @@ use App\Http\Controllers\CartItemController;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * @property User $user
+ * @property Order $order
+ * @property GeneralRequestBuilder $generalRequestBuilder
+ * @property PlaceToPayPaymentService $placeToPayPaymentService
+ * @property OrderRepository $orderRepository
+ */
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
 
     private User $user;
     private Order $order;
+    protected OrderRepository $orderRepository;
 
     protected function setUp(): void
     {
@@ -40,6 +48,7 @@ class OrderTest extends TestCase
 
         $category = Category::factory()->create();
 
+        // @phpstan-ignore-next-line
         $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
 
         $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
@@ -52,6 +61,8 @@ class OrderTest extends TestCase
         $orderService = new OrderService();
 
         $this->order = $orderService->createOrder($this->user);
+
+        $this->orderRepository = new OrderRepository();
     }
 
     /**
@@ -88,8 +99,9 @@ class OrderTest extends TestCase
     public function orders_can_be_paid_with_place_to_pay(): void
     {
         $orders = $this->user->orders;
+        $orderId = null;
 
-        Log::info($orders);
+        Log::info('Esta es la lista de las ordenes en el test: ' . $orders);
 
         foreach ($orders as $order) {
             $orderId = $order->id;
@@ -127,4 +139,35 @@ class OrderTest extends TestCase
             Log::info('No se puede obtener el id de la orden');
         };
     }
+
+
+    /**
+     * @test
+     */
+    // public function order_status_can_be_changed_to_paid(): void
+    // {
+    //     Log::info('Este es el usuario que crea una orden en el test: ' . $this->user);
+    //     Log::info('Esta es la orden a la que se le va a actualizar el estado en el test: ' . $this->order);
+        
+    //     $this->order->order_number = '1234';
+
+    //     Log::info('Esta es la orden a la que se le va a actualizar el estado en el test: ' . $this->order);
+
+    //     $lastOrder = $this->order->order_number;
+
+    //     $mockResponse = [
+    //         'status' => [
+    //             'status' => 'APPROVED',
+    //             'reason' => '00',
+    //             'message' => 'La petición ha sido aprobada exitosamente',
+    //             'date' => '2022-09-26T21:07:27-05:00'
+    //         ],
+    //     ];
+
+    //     Http::fake([config('placetopay.url').'/*' . $lastOrder => Http::response($mockResponse)]);
+
+    //     $this->postJson(route('orders.payment', $lastOrder), [
+    //         'requestId' => $lastOrder,
+    //     ])->assertRedirect(route('payment.processed'))->assertViewIs('orders.processed');
+    // }
 }

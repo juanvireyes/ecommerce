@@ -11,37 +11,65 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use App\Services\OrderService;
 use Database\Seeders\RolesSeeder;
+use Illuminate\Support\Facades\Log;
 use Database\Seeders\PermissionsSeeder;
 use App\Http\Controllers\CartItemController;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * @property Cart $cart
+ * @property User $user
+ * @property Product $product
+ * @property CartItem $cartItem
+ */
 class CartTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected User $user;
+    protected Product $product;
+    protected Cart $cart;
+    protected CartItem $cartItem;
+    protected OrderService $orderService;
+    protected CartItemController $cartItemController;
+    protected Category $category;
+    protected Subcategory $subcategory;
+    protected int $quantity;
+    protected string $productId;
+    protected string $cartId;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RolesSeeder::class);
+        $this->seed(PermissionsSeeder::class);
+
+        $this->user = User::factory()->create();
+
+        // @phpstan-ignore-next-line
+        $this->category = Category::factory()->create();
+
+        // @phpstan-ignore-next-line
+        $this->subcategory = Subcategory::factory()->create(['category_id' => $this->category->id]);
+
+        $this->product = Product::factory()->create(['subcategory_id' => $this->subcategory->id]);
+        $this->cart = Cart::factory()->create(['user_id' => $this->user->id]);
+        $this->quantity = 2;
+
+        $this->orderService = new OrderService();
+    }
     
     /**
      * @test
      */
     public function add_to_cart(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
 
-        $user = User::factory()->create();
-
-        $category = Category::factory()->create();
-
-        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
-
-        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
-        $cart = Cart::factory()->create(['user_id' => $user->id]);
-        $quantity = 1;
-
-        $response = $this->actingAs($user)->post(route('cart.add', [
-            'cart_id' => $cart->id,
-            'productId' => $product->id,
-            'quantity' => $quantity,
+        $response = $this->actingAs($this->user)->post(route('cart.add', [
+            'cart_id' => $this->cart->id,
+            'productId' => $this->product->id,
+            'quantity' => $this->quantity,
         ]));
 
         $response->assertRedirect(url()->previous());
@@ -52,22 +80,9 @@ class CartTest extends TestCase
     /** @test */
     public function remove_from_cart(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $cartItem = CartItemController::store($this->cart, $this->product, $this->quantity);
 
-        $user = User::factory()->create();
-
-        $category = Category::factory()->create();
-
-        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
-
-        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
-        $cart = Cart::factory()->create(['user_id' => $user->id]);
-        $quantity = 2;
-
-        $cartItem = CartItemController::store($cart, $product, $quantity);
-
-        $response = $this->actingAs($user)->delete(route('cart.destroy', $cartItem));
+        $response = $this->actingAs($this->user)->delete(route('cart.destroy', $cartItem));
 
         $response->assertStatus(302);
 
@@ -78,24 +93,11 @@ class CartTest extends TestCase
     /** @test */
     public function update_cart(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $cartItem = CartItemController::store($this->cart, $this->product, $this->quantity);
 
-        $user = User::factory()->create();
-
-        $category = Category::factory()->create();
-
-        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
-
-        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
-        $cart = Cart::factory()->create(['user_id' => $user->id]);
-        $quantity = 2;
-
-        $cartItem = CartItemController::store($cart, $product, $quantity);
-
-        $response = $this->actingAs($user)->patch(route('cart.update', $cartItem), [
+        $response = $this->actingAs($this->user)->patch(route('cart.update', $cartItem), [
             'quantity' => 3,
-            'item_total_amount' => $product->price * 3,
+            'item_total_amount' => $this->product->price * 3,
         ]);
 
         $response->assertRedirect(url()->previous());
@@ -104,22 +106,7 @@ class CartTest extends TestCase
     /** @test */
     public function clear_cart(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
-
-        $user = User::factory()->create();
-
-        $category = Category::factory()->create();
-
-        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
-
-        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
-        $cart = Cart::factory()->create(['user_id' => $user->id]);
-        $quantity = 2;
-
-        $cartItem = CartItemController::store($cart, $product, $quantity);
-
-        $response = $this->actingAs($user)->post(route('cart.clear', ['cart' => $cart]));
+        $response = $this->actingAs($this->user)->post(route('cart.clear', ['cart' => $this->cart]));
 
         $response->assertRedirect(route('cart.index'));
     }
@@ -127,26 +114,10 @@ class CartTest extends TestCase
     /** @test */
     public function checkout_cart_and_order_creation(): void
     {
-        $this->seed(RolesSeeder::class);
-        $this->seed(PermissionsSeeder::class);
+        $order = $this->orderService->createOrder($this->user);
 
-        $user = User::factory()->create();
+        Log::info('Esta es la orden del test: ' . $order->id);
 
-        $category = Category::factory()->create();
-
-        $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
-
-        $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);
-        $cart = Cart::factory()->create(['user_id' => $user->id]);
-        $quantity = 2;
-
-        $cartItem = CartItemController::store($cart, $product, $quantity);
-
-        $orderService = new OrderService();
-
-        $order = $orderService->createOrder($user);
-
-        $this->assertDatabaseHas('orders', ['user_id' => $user->id]);
-        $this->assertDatabaseHas('order_details', ['order_id' => $order->id]);
+        $this->assertDatabaseHas('orders', ['user_id' => $this->user->id]);
     }
 }

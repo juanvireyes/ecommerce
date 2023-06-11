@@ -24,15 +24,10 @@ use Illuminate\Database\Eloquent\Casts\Json;
 
 class TestingController extends Controller
 {
-    private $subcategoryRepository;
     private ProductRepository $productRepository;
-    private $categoriesRepository;
-    private CartService $cartService;
-
-    public function __construct(CategoryRepository $categoryRepository, SubcategoryRepository  $subcategoryRepository, ProductRepository $productRepository)
+    
+    public function __construct(ProductRepository $productRepository)
     {
-        $this->categoriesRepository = $categoryRepository;
-        $this->subcategoryRepository = $subcategoryRepository;
         $this->productRepository = $productRepository;
     }
 
@@ -80,7 +75,7 @@ class TestingController extends Controller
 
             $cart = $user->cart;
             
-            $cartItems = $cart->cartItems->groupBy('product_id')->map(function ($items) {
+            $cartItems = collect($cart->cartItems)->groupBy('product_id')->map(function ($items) {
                 $item = $items->first();
                 $item->quantity = $items->sum('quantity');
                 $item->item_total_amount = $items->sum('item_total_amount');
@@ -114,16 +109,9 @@ class TestingController extends Controller
             
             $cartItem = CartItemController::store($cart, $product, $quantity);
 
-            // dd($cartItem);
+            $cart->calculateCartTotalAmountTest();
 
-            if ($cartItem) {
-
-                $cart->calculateCartTotalAmountTest();
-
-                return redirect()->route('cart.index');
-            } else {
-                return back()->with('error', 'Something went wrong');
-            };
+            return redirect()->route('cart.index');
         };
     }
 

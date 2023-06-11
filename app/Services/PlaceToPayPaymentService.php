@@ -35,6 +35,8 @@ class PlaceToPayPaymentService extends PaymentService
         $order = $orderRepository->getOrderById($orderId);
         
         $result = Http::post(config('placetopay.url').'/api/session', $builtRequest->build($order));
+
+        Log::info('Response: '.print_r($result->json()['requestId'], true));
         
         if ($result->ok()) {
 
@@ -54,7 +56,7 @@ class PlaceToPayPaymentService extends PaymentService
 
     public function getPaymentStatus()
     {
-        $log = Log::info('Getting payment status with PlaceToPay');
+        Log::info('Getting payment status with PlaceToPay');
 
         $user = auth()->user();
 
@@ -66,6 +68,8 @@ class PlaceToPayPaymentService extends PaymentService
             ]
         );
 
+        Log::info('Response: '.print_r($response->json()['status'], true));
+
         if ($response->ok()) {
 
             $status = $response->json()['status']['status'];
@@ -76,12 +80,17 @@ class PlaceToPayPaymentService extends PaymentService
 
                 $status = $lastOrder->status;
 
+                OrderUpdateAction::execute($lastOrder);
+
+                Log::info('Order status: '.$status);
+
             } elseif ($status == 'REJECTED') {
 
                 $lastOrder->rejected();
 
                 $status = $lastOrder->status;
 
+                Log::info('Order status: '.$status);
 
             } elseif ($status == 'CANCELLED') {
 
@@ -89,11 +98,15 @@ class PlaceToPayPaymentService extends PaymentService
 
                 $status = $lastOrder->status;
 
+                Log::info('Order status: '.$status);
+
             } elseif ($status == 'PENDING') {
 
                 $lastOrder->approved();
 
                 $status = $lastOrder->status;
+
+                Log::info('Order status: '.$status);
 
             };
 

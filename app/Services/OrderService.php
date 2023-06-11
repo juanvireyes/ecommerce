@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property Cart $cart
@@ -27,6 +28,8 @@ class OrderService
 
         $cart->delete();
 
+        $user->load('orders');
+
         return $order;
     }
 
@@ -44,7 +47,10 @@ class OrderService
         $cartItems = $cart->cartItems;
 
         foreach ($cartItems as $cartItem) {
+            $cartItem->load('product');
             $product = $cartItem->product;
+
+            Log::info('Producto agregado: ' . $product);
 
             OrderDetail::create([
                 'order_id' => $order->id,
@@ -55,5 +61,6 @@ class OrderService
                 'product_total' => $cartItem->item_total_amount
             ]);
         };
+
     }
 }

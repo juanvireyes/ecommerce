@@ -33,8 +33,8 @@ class CartController extends Controller
 
             $cart = $user->cart;
             
-            // @phpstan-ignore-next-line
-            $cartItems = $cart ? $cart->cartItems->groupBy('product_id')->map(function ($items) { //@phpstan-ignore-line
+
+            $cartItems = $cart ? collect($cart->cartItems)->groupBy('product_id')->map(function ($items) {
                 $item = $items->first();
                 $item->quantity = $items->sum('quantity');
                 $item->item_total_amount = $items->sum('item_total_amount');

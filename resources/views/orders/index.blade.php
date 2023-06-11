@@ -8,6 +8,8 @@
             Órdenes de compra
         </h1>
 
+        @include('orders.components.order-filter-form')
+
         <div class="flex flex-row justify-center items-center text-center mt-2 py-2 mx-auto px-2">
             <table class="text-center">
                 <thead>
@@ -26,6 +28,10 @@
                         </th>
                         <th scope="col"
                         class="px-6 py-3 text-center text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
+                            Fecha
+                        </th>
+                        <th scope="col"
+                        class="px-6 py-3 text-center text-xs font-medium text-red-500 font-bold uppercase tracking-wider">
                             Estado
                         </th>
                         <th scope="col"
@@ -41,10 +47,13 @@
                                 {{ $order->id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                {{ $order->user->name }}
+                                {{ $user->name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                {{ $order->total }}
+                                USD ${{ $order->total }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                                {{ $order->created_at->format('d-m-Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                                 
@@ -74,6 +83,9 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div>
+            {{ $orders->links() }}
         </div>
     </div>
 @endsection

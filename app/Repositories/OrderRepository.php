@@ -19,7 +19,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function getAllOrders(User $user): Collection
     {
-        return $user->orders;
+        return $user->orders()->orderBy('created_at', 'desc')->get();
     }
 
 
@@ -29,6 +29,8 @@ class OrderRepository implements OrderRepositoryInterface
 
             $order->update($data);
 
+            Log::info('Order updated: ' . $order);
+
             return true;
 
         } catch (\Exception $e) {
@@ -37,8 +39,6 @@ class OrderRepository implements OrderRepositoryInterface
             
             throw new \Exception('Error updating order');
 
-            return false;
-
         };
     }
 
@@ -46,33 +46,45 @@ class OrderRepository implements OrderRepositoryInterface
     public function getUserLastOrder(User $user): Order
     {
         $userId = $user->id;
-        $orders = $user->orders;
-        $orderStatus = '';
 
-        foreach($orders as $order) {
-            $orderStatus = $order->status;
+        $order = $user->orders()->where('user_id', '=', $userId)
+            ->where('status', '=', 'pending')
+            ->where('order_number', '!=', null)
+            ->first();
+        
+        if($order) {
+            Log::info('Id de orden que se está actualizando: ' . $order->id);
+        } else {
+            Log::info('No se encontrón ninguna orden');
         };
-
-        if($orderStatus == 'pending') {
-            $order = Order::query()
-            ->where('user_id' , '=' ,  $userId)
-            ->where('status' , '=' , $orderStatus)
-            ->latest()->first();
-        };
-
-        $order = Order::query()
-            ->where('status' , '!=' , 'pending')
-            ->latest()->first();
 
         return $order;
     }
 
-    public function getOrdersList(): LengthAwarePaginator
+    public function getOrdersList(User $user): LengthAwarePaginator
     {
+        $userId = $user->id;
+
         $orders = Order::query()
+            ->where('user_id', '=', $userId)
             ->with('user')
+            ->with('orderItems')
             ->latest()->paginate(10);
 
+        return $orders;
+    }
+
+    public function getUserOrdersByStatus(User $user, string $status): LengthAwarePaginator
+    {
+        $userId = $user->id;
+
+        $orders = Order::query()
+            ->where('user_id', '=', $userId)
+            ->where('status', '=', $status)
+            ->with('user')
+            ->with('orderItems')
+            ->latest()->paginate(10);
+        
         return $orders;
     }
 }

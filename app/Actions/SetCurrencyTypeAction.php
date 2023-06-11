@@ -8,7 +8,7 @@ class SetCurrencyTypeAction
     {
         $ammountLenght = strlen((string)$ammount);
 
-        if ($ammountLenght >= 10) {
+        if ($ammountLenght > 8) {
 
             return 'COP';
 

@@ -31,8 +31,6 @@ class ProductController extends Controller
 
     public function index(Request $request): View
     {
-        // dd($request->all());
-
         $categories = $this->categoryRepository->getAllCategories();
         
         $categoryId = $request->categoryId;

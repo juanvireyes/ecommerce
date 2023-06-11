@@ -23,7 +23,7 @@ class ProductTest extends TestCase
     private Role $admin_role;
     private Role $superadmin_role;
     private Role $client_role;
-    private Category $category;
+    private int $categoryId;
     private int $subcategoryId;
     private Product $product;
 
@@ -38,9 +38,10 @@ class ProductTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        $categoryId = Category::factory()->create()->id;
+        // @phpstan-ignore-next-line
+        $this->categoryId = Category::factory()->create()->id;
 
-        $this->subcategoryId = Subcategory::factory()->create(['category_id' => $categoryId])->id;
+        $this->subcategoryId = Subcategory::factory()->create(['category_id' => $this->categoryId])->id;
 
         $this->product = Product::factory()->create(['subcategory_id' => $this->subcategoryId]);
     }

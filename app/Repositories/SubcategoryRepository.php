@@ -13,13 +13,6 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
 {
     private $cacheKey = 'subcategories';
 
-    private $categoryRepository;
-
-    public function __construct(CategoryRepository $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
-
     public function getSubcategories(): Collection
     {
         $subcategories = Cache::remember($this->cacheKey, 10, function () {
@@ -31,8 +24,7 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
 
     public function getSubcategoriesFromCategory(Category $category): Collection
     {
-        // $category = $this->categoryRepository->getCategoryById($category->id);
-
+        
         return $category->subcategories;
     }
 

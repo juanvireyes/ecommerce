@@ -52,7 +52,7 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
-    public function calculateCartTotalAmountTest(): self
+    public function calculateCartTotalAmountTest(): float
     {
         $cartItems = $this->cartItems;
 
@@ -66,7 +66,7 @@ class Cart extends Model
 
         $this->save();
 
-        return $this;
+        return $this->total_amount;
     }
 
     public function clearCart(): self
@@ -74,13 +74,13 @@ class Cart extends Model
         $cartItems = $this->cartItems;
 
         foreach ($cartItems as $cartItem) {
+            $cartItem->load('product');
             $product = $cartItem->product;
             $quantity = $cartItem->quantity;
             $product->increaseStock($quantity);
             $product->updateStatus();
         };
         
-        // @phpstan-ignore-next-line
         $this->cartItems()->delete();
         $this->total_amount = 0;
         $this->save();

@@ -13,6 +13,14 @@ use Spatie\Permission\Contracts\Permission;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * @property User $user
+ * @property Role $admin_role
+ * @property Role $superadmin_role
+ * @property Role $client_role
+ * @property Category $category
+ * @property int $categoryId
+ */
 class SubcategoryTest extends TestCase
 {
     use RefreshDatabase;
@@ -35,8 +43,10 @@ class SubcategoryTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        $this->category = Category::factory()->create()->id();
-        $this->categoryId = $this->category->id;
+        // @phpstan-ignore-next-line
+        $this->category = Category::factory()->create();
+        // @phpstan-ignore-next-line
+        $this->categoryId = $this->category->id; // @phpstan ignore-line
     }
 
     public function test_ssubcategories_index_page_can_be_rendered_as_admin(): void

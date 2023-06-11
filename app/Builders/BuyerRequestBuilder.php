@@ -16,6 +16,56 @@ class BuyerRequestBuilder
     string $country = null,
     string $phoneNumber = null):  array
     {
+        if ($zip == null) {
+
+            return [
+                'street' => $street,
+                'city' => $city,
+                'state' => $state,
+                'country' => $country,
+                'phoneNumber' => $phoneNumber
+            ];
+        } elseif ($zip == null && $country == null && $state == null && $city == null) {
+
+            return [
+                'phoneNumber' => $phoneNumber
+            ];
+        } elseif ($zip == null && $country == null && $state == null) {
+
+            return [
+                'street' => $street,
+                'city' => $city,
+                'phoneNumber' => $phoneNumber
+            ];
+        } elseif ($zip == null && $country == null) {
+
+            return [
+                'street' => $street,
+                'city' => $city,
+                'state' => $state,
+                'phoneNumber' => $phoneNumber
+            ];
+        } elseif ($phoneNumber == null && $country == null) {
+
+            return [
+                'street' => $street,
+                'city' => $city,
+                'state' => $state,
+                'zip' => $zip
+            ];
+        } elseif ($phoneNumber == null && $zip == null) {
+
+            return [
+                'street' => $street,
+                'city' => $city,
+                'state' => $state,
+                'country' => $country
+            ];
+        } elseif ($street == null && $zip == null && $country == null && $state == null && $city == null && $phoneNumber == null) {
+
+            return [];
+        };
+
         return [
             'street' => $street,
             'city' => $city,

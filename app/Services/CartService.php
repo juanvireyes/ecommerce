@@ -53,7 +53,7 @@ class CartService
 
     protected function updateCartTotalAmount(Cart $cart): void
     {
-        $totalAmount = $cart->cartItems->sum('item_total_amount');
+        $totalAmount = collect($cart->cartItems)->sum('item_total_amount');
         $cart->total_amount = $totalAmount;
         $cart->save();
     }

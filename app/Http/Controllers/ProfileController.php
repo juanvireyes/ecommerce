@@ -34,8 +34,6 @@ class ProfileController extends Controller
 
         $request->user()->fill($validatedData);
         
-        // $request->user()->fill($request->validated());
-
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
@@ -63,6 +61,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::to(route('clients.index'));
     }
 }
