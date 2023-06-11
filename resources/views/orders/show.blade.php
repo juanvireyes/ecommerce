@@ -107,7 +107,7 @@
             @endif
 
             @if ($user->hasRole(['superadmin']) && $order->status != 'completed')
-                <form action="{{ route('user.orders.destroy', ['user' => $user, 'id' => $order->id]) }}" method="post">
+                <form action="{{ route('user.orders.destroy', $order->id) }}" method="post">
                 
                     @csrf
                     @method('DELETE')

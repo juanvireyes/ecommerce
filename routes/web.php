@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(fu
     Route::get('users/{user}', [SuperadminController::class, 'edit'])->name('users.edit');
     Route::put('users/{user}', [SuperadminController::class, 'update'])->name('users.update');
     Route::get('user/{user}/orders', [OrderAdminController::class, 'index'])->name('user.orders');
-    Route::delete('user/{user}/orders/{id}', [OrderAdminController::class, 'destroy'])->name('user.orders.destroy');
+    Route::delete('user/orders/{id}', [OrderAdminController::class, 'destroy'])->name('user.orders.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Category'])->group( function () {
