@@ -114,7 +114,7 @@
 
                     <input type="hidden" name="order_id" value="{{ $order->id }}">
 
-                    <button type="submit" class="bg-yellow-400 hover:bg-red-500 text-black text-md font-semibold">
+                    <button type="submit" class="bg-yellow-400 hover:bg-red-500 text-black text-md font-semibold px-2 py-3 rounded-md">
                         Eliminar orden
                     </button>
 
