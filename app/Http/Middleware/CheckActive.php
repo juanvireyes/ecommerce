@@ -21,10 +21,10 @@ class CheckActive
             Auth::logout();
 
             $request->session()->invalidate();
-
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('error', 'Tu cuenta ha sido desactivada. Por favor contacta al administrador.');
+            return redirect()->route('login')
+                ->with('error', 'Tu cuenta ha sido desactivada. Por favor contacta al administrador.');
         };
         
         return $next($request);

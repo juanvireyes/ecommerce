@@ -78,7 +78,7 @@ class Product extends Model
             $this->active = true;
         } elseif ($this->stock == 0) {
             $this->active = false;
-        };
+        }
 
         $this->save();
         return $this;

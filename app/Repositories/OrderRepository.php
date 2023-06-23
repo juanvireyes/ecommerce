@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\User;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -20,7 +19,7 @@ class OrderRepository implements OrderRepositoryInterface
     public function getAllOrders(User $user): LengthAwarePaginator
     {
         $userId = $user->id;
-        
+    
         $orders = Order::query()
         ->where('user_id', '=', $userId)
         ->with('user')
@@ -37,7 +36,6 @@ class OrderRepository implements OrderRepositoryInterface
         try {
 
             $order->update($data);
-
             Log::info('Order updated: ' . $order);
 
             return true;
@@ -65,7 +63,7 @@ class OrderRepository implements OrderRepositoryInterface
             Log::info('Id de orden que se está actualizando: ' . $order->id);
         } else {
             Log::info('No se encontrón ninguna orden');
-        };
+        }
 
         return $order;
     }
@@ -73,7 +71,6 @@ class OrderRepository implements OrderRepositoryInterface
     public function getOrdersList(User $user): LengthAwarePaginator
     {
         $userId = $user->id;
-
         $orders = Order::query()
             ->where('user_id', '=', $userId)
             ->with('user')
@@ -86,7 +83,6 @@ class OrderRepository implements OrderRepositoryInterface
     public function getUserOrdersByStatus(User $user, string $status): LengthAwarePaginator
     {
         $userId = $user->id;
-
         $orders = Order::query()
             ->where('user_id', '=', $userId)
             ->where('status', '=', $status)

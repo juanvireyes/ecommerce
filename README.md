@@ -1,66 +1,37 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mercatodo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<p>
+    Este es un proyecto del Bootcamp de Evertec - PlaceToPay. A continuación se describen los pasos para poder descargar y utilizar el proyecto en tu máquina local.
 </p>
 
-## About Laravel
+<br>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### Consideraciones iniciales:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Como recomendación del desarrollador te sugerimos utilizar Laragon como entorno base para el proyecto, sin embargo no es obligatorio (XAMPP o WAMPP son válidos también)
+- Tener un gestor de base de datos relacional puede ser de gran ayuda
+- Tener instalada la versión 8.2.5 (como mínimo) de PHP en tu sistema, así como Composer en su versión 2.4.1 (como mínimo)
+- Debes tener instalado también npm en tu sistema para poder compilar el frontend del proyecto 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<br>
 
-## Learning Laravel
+## Pasos para descargar el proyecto
+<br>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Crea una carpeta en tu sistema para clonar el proyecto desde el repositorio. Para Laragon recomiendo clonar el proyecto directamente en laragon/www. En el caso de XAMPP se recomienda hacerlo dentro de Xampp/htdocs. Esto no es obligatorio y puedes hacerlo dentro de cualquier parte de tu sistema.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Accede a la url del repositorio https://github.com/juanvireyes/ecommerce y en el botón verde "Code" puedes seleccionar la opción que requieras para clonar el repo utilizando el comando git clone o la CLI de git (No olvides tener instalado Git en tu sistema operativo)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Una vez hayas clonado el repositorio en tu máquina local debes acceder al directorio (o carpeta) "ecommerce" a través del terminal (con el comando cd ecommerce estando ubicado dentro de la carpeta donde clonaste el repositorio)
 
-## Laravel Sponsors
+4. Una vez dentro de la carpeta ecommerce (y con Composer instalado en tu sistema) debes correr el comando composer install (también funciona composer i) para instalar todas las dependencias necesarias de laravel y composer para el proyecto
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+5. También debes correr el comando npm instal (también funciona npm i) para poder compilar los assets de vite en el proyecto y poder cargar el frontend correctamente
 
-### Premium Partners
+6. Si utilizas VisualStudioCode y lo tienes configurado, puedes utilizar el comando code . en la terminal dentro de la carpeta ecommerce para abrir el proyecto completo en el editor de código. O puedes abrir el proyecto con tu editor de código favorito
+   
+7. También debes correr el comando npm run dev en tu terminal dentro de la carpeta ecommerce para compilar los assets del frontend con vite
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+8. Es muy importante, antes de abrir el proyecto en local, ejecutar las migraciones utilizando el comando php artisan migrate. Adicionalmente se pueden realizar los seeders con el comando php artisan db:seed para llenar algunos datos de prueba en tu base de datos.
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+9. Si estás utilizando una carpeta independiente (que no se encuentre dentro de la ruta laragon/www o Xampp/htdocs) debes correr en una nueva terminal el comando php artisan serve para correr el servidor del proyecto. Si tienes tu proyecto dentro de las rutas de laragon o XAMPP mencionadas anteriormente, puedes acceder a http://127.0.0.1:8000/public sin necesidad de correr el comando php artisan serve para acceder al proyecto y poder visualizar su funcionamiento 

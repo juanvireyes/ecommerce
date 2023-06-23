@@ -55,7 +55,6 @@ class Cart extends Model
     public function calculateCartTotalAmountTest(): float
     {
         $cartItems = $this->cartItems;
-
         $totalAmount = 0;
 
         foreach ($cartItems as $item) {
@@ -63,7 +62,6 @@ class Cart extends Model
         };
 
         $this->total_amount = $totalAmount;
-
         $this->save();
 
         return $this->total_amount;

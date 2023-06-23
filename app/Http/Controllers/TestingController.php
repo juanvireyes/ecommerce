@@ -2,25 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Cart;
-use App\Models\Product;
-use App\Models\CartItem;
 use Illuminate\View\View;
-use App\Models\Subcategory;
 use Illuminate\Http\Request;
-use App\Services\CartService;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use App\Builders\GeneralRequestBuilder;
 use App\Repositories\ProductRepository;
-use App\Repositories\CategoryRepository;
-use App\Actions\UpdateProductStatusAction;
-use App\Http\Requests\StoreCartItemRequest;
-use App\Repositories\SubcategoryRepository;
 use App\Services\ExchangeCurrencyService;
-use Illuminate\Database\Eloquent\Casts\Json;
 
 class TestingController extends Controller
 {
@@ -30,25 +17,6 @@ class TestingController extends Controller
     {
         $this->productRepository = $productRepository;
     }
-
-    // public function index(Request $request): View
-    // {
-    //     $products = $this->loadProducts();
-
-    //     return view('testing', compact('products'));
-    // }
-
-    // public function loadProducts(): JsonResponse
-    // {
-    //     $products = $this->productRepository->getAllProducts();
-
-    //     return response()->json($products);
-    // }
-
-    // public function updateAllProducts(UpdateProductStatusAction $action)
-    // {
-    //     return $action->execute();
-    // }
 
     public function index(): View
     {
@@ -71,20 +39,18 @@ class TestingController extends Controller
 
             return view('auth.login');
 
-        } else {
+        }
 
-            $cart = $user->cart;
+        $cart = $user->cart;
             
-            $cartItems = collect($cart->cartItems)->groupBy('product_id')->map(function ($items) {
-                $item = $items->first();
-                $item->quantity = $items->sum('quantity');
-                $item->item_total_amount = $items->sum('item_total_amount');
-                return $item;
-            });
+        $cartItems = collect($cart->cartItems)->groupBy('product_id')->map(function ($items) {
+            $item = $items->first();
+            $item->quantity = $items->sum('quantity');
+            $item->item_total_amount = $items->sum('item_total_amount');
+            return $item;
+        });
 
-            return view('testing.testing-cart', compact('cartItems', 'cart'));
-        };
-
+        return view('testing.testing-cart', compact('cartItems', 'cart'));
     }
 
     public function addToCartTest(Request $request, ProductRepository $productRepository)
@@ -102,17 +68,17 @@ class TestingController extends Controller
 
         if (!$userId) {
             return view('auth.login');
-        } else {
-            $cart = Cart::firstOrCreate([
-                'user_id' => $userId
-            ]);
-            
-            $cartItem = CartItemController::store($cart, $product, $quantity);
+        }
 
-            $cart->calculateCartTotalAmountTest();
+        $cart = Cart::firstOrCreate([
+            'user_id' => $userId
+        ]);
+        
+        $cartItem = CartItemController::store($cart, $product, $quantity);
 
-            return redirect()->route('cart.index');
-        };
+        $cart->calculateCartTotalAmountTest();
+
+        return redirect()->route('cart.index');
     }
 
 

@@ -37,49 +37,33 @@ class UpdatePaymentSession extends Command
     public function handle(): void
     {
         $orders = Order::query()->where('status', '=', 'PENDING')->get();
-
         $placeToPayAuthAction = new CreatePlaceToPayAuthAction();
-
         $response = null;
+        $order = null;
 
         foreach ($orders as $order) {
             
             echo $order->order_number.PHP_EOL;
 
-            
             $response = Http::post(config('placetopay.url').'/api/session/'.$order->order_number, 
                 [
                     'auth' => $placeToPayAuthAction->execute()
-                ]);
-        };
+                ]
+            );
 
-        if ($response->ok()) {
-
-            $status = $response->json()['status']['status'];
-
-            if ($status == 'APPROVED') {
-
-                // @phpstan-ignore-next-line
-                $order->completed();
-
-            } elseif ($status == 'REJECTED') {
-
-                // @phpstan-ignore-next-line
-                $order->rejected();
-
-
-            } elseif ($status == 'CANCELLED') {
-
-                // @phpstan-ignore-next-line
-                $order->cancelled();
-
-            } elseif ($status == 'APPROVED_PARTIAL') {
-
-                // @phpstan-ignore-next-line
-                $order->approved();
-
-            };
-
+            if ($response->ok()) {
+                $status = $response->json()['status']['status'];
+    
+                if ($status == 'APPROVED') {
+                    $order->completed();
+                } elseif ($status == 'REJECTED') {
+                    $order->rejected();
+                } elseif ($status == 'CANCELLED') {
+                    $order->cancelled();
+                } elseif ($status == 'APPROVED_PARTIAL') {
+                    $order->approved();
+                }    
+            }
         };
     }
 }

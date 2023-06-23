@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Repositories\CategoryRepository;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
@@ -21,19 +18,14 @@ class ClientController extends Controller
     public function index(Request $request): View
     {
         $categories = $this->categoriesRepository->getAllCategories();
-
         $search = $request->filter;
 
         if ($search !== null) {
-
             $search = strtolower($search);
             $filtered_categories = $this->filterCategories($search);
+        }
 
-        } else {
-
-            $filtered_categories = $categories;
-
-        };
+        $filtered_categories = $categories;
 
         return view('clients.categories', compact('filtered_categories', 'search'));
     }
@@ -43,10 +35,5 @@ class ClientController extends Controller
         $filteredCategories = $this->categoriesRepository->getCategoryByName($search);
 
         return $filteredCategories ? [$filteredCategories] : [];
-    }
-
-    public function getCategoryBySlug(string $slug): Category
-    {
-        return Category::where('slug', $slug)->first();
     }
 }

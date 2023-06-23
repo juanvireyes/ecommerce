@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\Cart;
-use App\Models\User;
-use App\Models\Product;
 use App\Models\CartItem;
 use App\Repositories\ProductRepository;
 
@@ -22,19 +20,14 @@ class CartService
 
     public function getCurrentCart(): Cart
     {
-
         return Cart::firstOrCreate(['user_id' => $this->userId]);
-
     }
-
 
     public function createCartItem(int $productId, int $quantity): CartItem
     {
 
         $cart = $this->getCurrentCart();
-
         $cartId = $cart->id;
-
         $product = $this->productRepository->getProductById($productId);
 
         $cartItem = CartItem::Create([
@@ -61,13 +54,11 @@ class CartService
     public function getCartItems(): array
     {
         $cart = $this->getCurrentCart();
-
         $cartItems = $cart->cartItems;
 
         return $cartItems;
     }
 
-    
     public function updateCartItemQuantity(int $cartItemId, int $quantity): bool
     {
         $cartItem = CartItem::find($cartItemId);
@@ -78,11 +69,10 @@ class CartService
             $cartItem->save();
 
             return true;
-        };
+        }
 
         return false;
     }
-
 
     public function removeCartItem(int $cartItemId): bool
     {
@@ -90,22 +80,18 @@ class CartService
 
         if ($cartItem) {
             $cartItem->delete();
-
             $cart = $cartItem->cart;
-
             $this->updateCartTotalAmount($cart);
 
             return true;
-        };
+        }
 
         return false;
     }
 
-
     public function clearCart(): bool
     {
         $cart = $this->getCurrentCart();
-
         $cart->cartItems()->delete();
         $cart->total_amount = 0;
         $cart->save();

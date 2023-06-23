@@ -60,7 +60,7 @@ class GeneralRequestBuilder
                 'ipAddress' => request()->ip(),
                 'userAgent' => request()->userAgent(),
             ];
-        };
+        }
 
         return [];
     }

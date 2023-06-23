@@ -98,7 +98,7 @@ class PaymentRequestBuilder
                 'total' => $amount,
                 'details' => $details
             ];
-        };
+        }
 
         $amountArray = [
             'currency' => $currency,
@@ -128,7 +128,7 @@ class PaymentRequestBuilder
                     'phone' => $user->cellphone, 
                 ],
             ];
-        };
+        }
 
         return [];
     }

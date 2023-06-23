@@ -8,7 +8,6 @@ use App\Models\Subcategory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\StoreSubcategoryRequest;
 use App\Http\Requests\UpdateSubcategoryRequest;
@@ -44,7 +43,6 @@ class SubcategoryController extends Controller
         return $this->subcategoryRepository->getSubcategories();
     }
 
-
     public function create(Category $category): View
     {
         $categories = $this->categoryRepository->getAllCategories();
@@ -52,7 +50,6 @@ class SubcategoryController extends Controller
         return view('subcategories.create', compact('categories'));
     }
 
-    
     public function store(StoreSubcategoryRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -62,29 +59,25 @@ class SubcategoryController extends Controller
 
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
-                return redirect()->back()->withErrors($request->validator()); // @phpstan-ignore-line
-            };
+                return redirect()->back()->with('error', 'El archivo no es válido');
+            }
 
             $validated['image'] = $request->file('image')->store('public');
-        };
+        }
 
         $subcategory = $this->subcategoryRepository->storeSubcategory($validated);
-
         $subcategory->save();
 
         return redirect()->route('subcategories.index');
     }
-
-    
+   
     public function edit(Subcategory $subcategory): View
     {
         $categories = $this->categoryRepository->getAllCategories();
-
         $this->authorize('update', $subcategory);
 
         return view('subcategories.edit', compact('subcategory', 'categories'));
     }
-
     
     public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
@@ -99,16 +92,12 @@ class SubcategoryController extends Controller
 
         $this->subcategoryRepository->updateSubcategory($subcategory, $validated);
 
-        session()->flash('success', 'Información actualizada correctamente');
-
         return redirect()->route('subcategories.index')->with('success', 'Información actualizada correctamente');
     }
 
-    
     public function destroy(Subcategory $subcategory): RedirectResponse
     {
         $this->authorize('delete', $subcategory);
-
         $this->subcategoryRepository->deleteSubcategory($subcategory);
 
         return redirect()->route('subcategories.index');

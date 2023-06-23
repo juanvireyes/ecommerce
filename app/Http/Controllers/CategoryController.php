@@ -6,7 +6,6 @@ use App\Models\Category;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use App\Repositories\CategoryRepository;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
@@ -37,26 +36,20 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
-                return redirect()->back()->withErrors($request->validator()); // @phpstan-ignore-line
-            };
+                return redirect()->back()->with('error', 'Error al subir la imagen');
+            }
 
             $validated['image'] = $request->file('image')->store('public');
+        }
 
-        };
-
-        // $category = Category::create($validated);
         $category = $this->categoryRepository->createCategory($validated);
-
         $category->save();
 
         return redirect()->route('categories.index');
     }
 
-    
     public function edit(Category $category): View
     {
-        $category->find($category->id);
-
         $this->authorize('update', $category);
 
         return view('categories.edit-category', compact('category'));
@@ -64,30 +57,21 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->find($category->id);
-
         $this->authorize('update', $category);
-
         $validated = $request->validated();
         $validated['slug'] = Str::of($request->name)->slug('-');
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('public');
-
-            // $category->update($validated);
-        };
+        }
 
         $category->update($validated);
-
-        session()->flash('success', 'Categoría actualizada correctamente');
 
         return redirect()->route('categories.edit', $category->id)->with('success', 'Categoría actualizada correctamente');
     }
 
     public function destroy(Category $category): RedirectResponse
     {
-        $category->find($category->id);
-
         $category->delete();
 
         return redirect()->route('categories.index');

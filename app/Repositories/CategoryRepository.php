@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Category;
-use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,7 +10,7 @@ use App\Repositories\Contracts\CategoryRepositoryInterface;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
-    private $cacheKey = 'categories';
+    private string $cacheKey = 'categories';
 
     public function getAllCategories(): Collection
     {
@@ -40,7 +39,6 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function createCategory(array $data): Category
     {
         $category = Category::create($data);
-        
         Cache::forget($this->cacheKey);
         
         return $category;
@@ -49,7 +47,6 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function updateCategory(array $data, Category $category): Category
     {
         $category->update($data);
-
         Cache::forget($this->cacheKey);
 
         return $category;
@@ -59,8 +56,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         try {
 
-            $category->delete();
-            
+            $category->delete();   
             Cache::forget($this->cacheKey);
             
             return true;

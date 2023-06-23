@@ -4,8 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Category;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Auth\Access\Response;
 
 class CategoryPolicy
 {

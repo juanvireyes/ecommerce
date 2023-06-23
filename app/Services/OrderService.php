@@ -16,7 +16,6 @@ class OrderService
     public function createOrder(User $user): Order
     {
         $cart = $user->cart;
-
         $totalAmmount = $this->getTotalAmmount($cart);
 
         $order = Order::create([
@@ -33,14 +32,12 @@ class OrderService
         return $order;
     }
 
-
     private function getTotalAmmount(Cart $cart): float
     {
         $totalAmmount = $cart->total_amount;
         
         return $totalAmmount;
     }
-
 
     private function createOrderDetails(Cart $cart, Order $order): void
     {
@@ -61,6 +58,5 @@ class OrderService
                 'product_total' => $cartItem->item_total_amount
             ]);
         };
-
     }
 }

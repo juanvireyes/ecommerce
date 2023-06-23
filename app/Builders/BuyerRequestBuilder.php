@@ -64,7 +64,7 @@ class BuyerRequestBuilder
         } elseif ($street == null && $zip == null && $country == null && $state == null && $city == null && $phoneNumber == null) {
 
             return [];
-        };
+        }
 
         return [
             'street' => $street,

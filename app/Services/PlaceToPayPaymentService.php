@@ -12,6 +12,7 @@ use App\Repositories\OrderRepository;
 use App\Builders\GeneralRequestBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class PlaceToPayPaymentService extends PaymentService
 {
@@ -54,7 +55,7 @@ class PlaceToPayPaymentService extends PaymentService
         return back()->with('error', 'Error al realizar el pago');
     }
 
-    public function getPaymentStatus()
+    public function getPaymentStatus(): View | RedirectResponse
     {
         Log::info('Getting payment status with PlaceToPay');
 

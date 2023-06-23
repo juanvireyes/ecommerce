@@ -11,7 +11,7 @@ use App\Repositories\Contracts\SubcategoryRepositoryInterface;
 
 class SubcategoryRepository implements SubcategoryRepositoryInterface
 {
-    private $cacheKey = 'subcategories';
+    private string $cacheKey = 'subcategories';
 
     public function getSubcategories(): Collection
     {
@@ -41,7 +41,6 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
     public function storeSubcategory(array $data): Subcategory
     {
         $subcategory = Subcategory::create($data);
-
         Cache::forget($this->cacheKey);
 
         return $subcategory;
@@ -50,7 +49,6 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
     public function updateSubcategory(Subcategory $subcategory, array $data): Subcategory
     {
         $subcategory->update($data);
-
         Cache::forget($this->cacheKey);
 
         return $subcategory;
