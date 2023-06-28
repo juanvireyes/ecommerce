@@ -1,37 +1,76 @@
 # Mercatodo
 
-<p>
-    Este es un proyecto del Bootcamp de Evertec - PlaceToPay. A continuación se describen los pasos para poder descargar y utilizar el proyecto en tu máquina local.
-</p>
+[![Project version](https://img.shields.io/badge/Version-V1.0-blue)]()
+[![Laravel version](https://img.shields.io/badge/Laravel-V4.4.3-red?logo=laravel)](https://laravel.com/)
+[![Npm Version](https://img.shields.io/badge/npm-8.18-gren?logo=npm)](https://docs.npmjs.com/)
+[![Vite](https://img.shields.io/badge/Vite-compiler-black?logo=vite)](https://vitejs.dev/)
 
+### Goal
+<br>
+Mercatodo is an ecommerce to learn and practice Laravel for the Evertec-PlaceToPay Bootcamp.
 <br>
 
-#### Consideraciones iniciales:
+-----
 
-- Como recomendación del desarrollador te sugerimos utilizar Laragon como entorno base para el proyecto, sin embargo no es obligatorio (XAMPP o WAMPP son válidos también)
-- Tener un gestor de base de datos relacional puede ser de gran ayuda
-- Tener instalada la versión 8.2.5 (como mínimo) de PHP en tu sistema, así como Composer en su versión 2.4.1 (como mínimo)
-- Debes tener instalado también npm en tu sistema para poder compilar el frontend del proyecto 
+## Installing Mercatodo
 
+#### Preparing your system
+- Get PHP at least in it's 8.2.5 version
+- Get Laravel al least in it's 4.4.3 version
+- Get composer at least in it's 2.4.2 version
+- If it's possible use Laragon to set a correct development environment
 <br>
+***
 
-## Pasos para descargar el proyecto
-<br>
+<p>First clone the repository in your local machine using git clone command</p>
 
-1. Crea una carpeta en tu sistema para clonar el proyecto desde el repositorio. Para Laragon recomiendo clonar el proyecto directamente en laragon/www. En el caso de XAMPP se recomienda hacerlo dentro de Xampp/htdocs. Esto no es obligatorio y puedes hacerlo dentro de cualquier parte de tu sistema.
+    git clone https://github.com/juanvireyes/ecommerce.git
 
-2. Accede a la url del repositorio https://github.com/juanvireyes/ecommerce y en el botón verde "Code" puedes seleccionar la opción que requieras para clonar el repo utilizando el comando git clone o la CLI de git (No olvides tener instalado Git en tu sistema operativo)
+<p>Install the composer depedencies in order the project can run</p>
 
-3. Una vez hayas clonado el repositorio en tu máquina local debes acceder al directorio (o carpeta) "ecommerce" a través del terminal (con el comando cd ecommerce estando ubicado dentro de la carpeta donde clonaste el repositorio)
+    composer install
 
-4. Una vez dentro de la carpeta ecommerce (y con Composer instalado en tu sistema) debes correr el comando composer install (también funciona composer i) para instalar todas las dependencias necesarias de laravel y composer para el proyecto
+<p>Do the same with node dependencies for front compilation</p>
 
-5. También debes correr el comando npm instal (también funciona npm i) para poder compilar los assets de vite en el proyecto y poder cargar el frontend correctamente
+    npm install
 
-6. Si utilizas VisualStudioCode y lo tienes configurado, puedes utilizar el comando code . en la terminal dentro de la carpeta ecommerce para abrir el proyecto completo en el editor de código. O puedes abrir el proyecto con tu editor de código favorito
-   
-7. También debes correr el comando npm run dev en tu terminal dentro de la carpeta ecommerce para compilar los assets del frontend con vite
+<p>After you've cloned and installed the project, you can set the environment variables that will be needed. Take a look at .env.example file so you can have an idea about those variables. If you don't have some env values, you should ask for them</p>
 
-8. Es muy importante, antes de abrir el proyecto en local, ejecutar las migraciones utilizando el comando php artisan migrate. Adicionalmente se pueden realizar los seeders con el comando php artisan db:seed para llenar algunos datos de prueba en tu base de datos.
+<p>Next you should run the migrations and seeders to populate your database with some data to work with, just run (Be sure that you provided the database information as is shown in .env.example file to avoid errors during migrations and db populate)</p>
 
-9. Si estás utilizando una carpeta independiente (que no se encuentre dentro de la ruta laragon/www o Xampp/htdocs) debes correr en una nueva terminal el comando php artisan serve para correr el servidor del proyecto. Si tienes tu proyecto dentro de las rutas de laragon o XAMPP mencionadas anteriormente, puedes acceder a http://127.0.0.1:8000/public sin necesidad de correr el comando php artisan serve para acceder al proyecto y poder visualizar su funcionamiento 
+    php artisan migrate --seed
+
+<p>If you created your project in an independent directory, run the following command to start the local server of your app</p>
+
+    php artisan serve
+
+## <p>If you've created the project using laragon, XAMPP or WAMPP see related documentation of each option to open the project</p>
+
+----
+# Project captions
+
+![Home page](public/gifs/vitrina.gif)
+![Login](public/gifs/login.gif)
+![Shopping cart](public/gifs/shoppingCart.gif)
+![Order generation](public/gifs/OrderGeneration.gif)
+![Payment](public/gifs/Payment.gif)
+
+
+----
+
+# Related documentation
+- [Laravel](https://laravel.com/)
+- [XAMPP config][XAMPP config]
+- [WAMP config][WAMP config]
+- [Laragon config][Laragon config]
+
+
+
+
+
+
+[XAMPP config]: https://www.freecodecamp.org/news/configure-a-laravel-project-with-custom-domain-name/#:~:text=First%2C%20launch%20your%20Xampp%20Interface,your%20Apache%20and%20MySQL%20Server.&text=Next%2C%20click%20on%20Explorer%20to,can%20setup%20your%20Laravel%20application.
+
+[WAMP config]: https://medium.com/@has.raymondwong/install-and-run-laravel-on-windows-wamp-server-fc9ce604cd50
+
+[Laragon config]: https://www.wikihow.com/Install-Laravel-Using-Laragon
