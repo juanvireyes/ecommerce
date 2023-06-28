@@ -48,7 +48,7 @@ class PaymentRequestBuilder
 
             $amount = ExchangeCurrencyService::exchange($currency, $toCurrency, $amount);
 
-            $currency = SetCurrencyTypeAction::execute($amount);
+            $currency = SetCurrencyTypeAction::execute(floatval($amount));
 
         }
 
