@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsExportJob implements ShouldQueue
 {
@@ -37,8 +38,14 @@ class ProductsExportJob implements ShouldQueue
         ];
 
         $fileName = 'exports/products-' . date('Ymd') . '.xlsx';
+        $this->createFile($fileName);
         Product::chunk(10, function ($products) {
             
         });
+    }
+
+    private function createFile(string $fileName): void
+    {
+        Storage::disk(config('filesystems.default'))->put($fileName, '');
     }
 }
