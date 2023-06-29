@@ -21,7 +21,7 @@ class CategoryFactory extends Factory
             'slug' => fake()->slug(),
             'description' => fake()->text(),
             'image' => fake()->imageUrl(),
-            'order' => fake()->numberBetween(1, 100)
+            'order' => fake()->unique()->numberBetween(1, 100)
         ];
     }
 

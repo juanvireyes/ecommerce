@@ -17,20 +17,14 @@ class SubcategoryFactory extends Factory
      */
     public function definition(): array
     {
-        
+        $category = Category::factory()->create();
         return [
             'name' => fake()->word(),
             'slug' => fake()->slug(),
             'description' => fake()->text(),
             'image' => fake()->imageUrl(),
             'order' => fake()->unique()->numberBetween(4, 24),
-            'category_id' => Category::factory()->create()->id,
+            'category_id' => $category->id,
         ];
-    }
-
-    private function getRandomCategoryExceptOne(Category $categoryToExclude): Category
-    {
-        $categories = Category::where('id', '<>', $categoryToExclude->id)->get();
-        return $categories->random();
     }
 }
