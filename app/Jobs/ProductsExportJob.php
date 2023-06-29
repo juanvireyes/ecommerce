@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Product;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -29,9 +28,6 @@ class ProductsExportJob implements ShouldQueue
             'Subcategoria',
             'Categoría'             
         ];
-
-        $timeZone = date_default_timezone_get();
-        Log::info('Timezone: ' . $timeZone);
 
         $fileName = 'exports/products-' . date('Ymd-His') . '.xlsx';
         $spreadsheet = new Spreadsheet();
