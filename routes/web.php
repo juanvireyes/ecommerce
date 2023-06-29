@@ -28,10 +28,6 @@ Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subc
 Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
 Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
 
-// Route::middleware(['auth', 'verified', 'can:export,App\Models\Product'])->group(function () {
-//     Route::get('products/export', ProductExportController::class)->name('products.export');
-// });
-
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('users', [SuperadminController::class, 'index'])->name('superadmin.index');
     Route::get('users/{user}', [SuperadminController::class, 'edit'])->name('users.edit');
