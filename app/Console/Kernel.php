@@ -4,24 +4,19 @@ namespace App\Console;
 
 use App\Console\Commands\ExpiredCartsCleanupCommand;
 use App\Console\Commands\UpdatePaymentSession;
+use App\Jobs\ProductsExportJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
         $schedule->command(ExpiredCartsCleanupCommand::class)->hourly();
         $schedule->command(UpdatePaymentSession::class)->hourly();
+        $schedule->job(new ProductsExportJob)->everyMinute();
     }
 
-    /**
-     * Register the commands for the application.
-     */
     protected function commands(): void
     {
         

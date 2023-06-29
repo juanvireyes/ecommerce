@@ -4,24 +4,17 @@ namespace App\Jobs;
 
 use App\Models\Product;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
 
 class ProductsExportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels; 
 
     public function handle(): void
     {
@@ -37,15 +30,33 @@ class ProductsExportJob implements ShouldQueue
             'Categoría'             
         ];
 
-        $fileName = 'exports/products-' . date('Ymd') . '.xlsx';
-        $this->createFile($fileName);
-        Product::chunk(10, function ($products) {
-            
-        });
-    }
+        $timeZone = date_default_timezone_get();
+        Log::info('Timezone: ' . $timeZone);
 
-    private function createFile(string $fileName): void
-    {
-        Storage::disk(config('filesystems.default'))->put($fileName, '');
+        $fileName = 'exports/products-' . date('Ymd-His') . '.xlsx';
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->fromArray($headers, 'A1');
+        $row = 2;
+
+        Product::chunk(10, function ($products) use ($sheet, &$row) {
+            foreach ($products as $product) {
+                $sheet->setCellValue('A' . $row, $product->name);
+                $sheet->setCellValue('B' . $row, $product->slug);
+                $sheet->setCellValue('C' . $row, $product->description);
+                $sheet->setCellValue('D' . $row, $product->image);
+                $sheet->setCellValue('E' . $row, $product->price);
+                $sheet->setCellValue('F' . $row, $product->stock);
+                $sheet->setCellValue('G' . $row, $product->active);
+                $sheet->setCellValue('H' . $row, $product->subcategory->name);
+                $sheet->setCellValue('I' . $row, $product->subcategory->category->name);
+
+                $row++;
+            }
+        });
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/' . $fileName));
     }
 }
