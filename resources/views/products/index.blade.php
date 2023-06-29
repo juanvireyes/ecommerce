@@ -6,13 +6,7 @@
 
 @section('content')
 
-    <div class="container mx-auto my-auto py-4">
-        <nav class="flex justify-center py-4">
-            <a href="{{ route('categories.index') }}" class="px-4 py-2 text-gray-700 hover:text-gray-900 hover:underline underline-offset-8 font-bold">Categorías</a>
-            <a href="{{ route('subcategories.index') }}" class="px-4 py-2 text-gray-700 hover:text-gray-900 hover:underline underline-offset-8 font-bold">Subcategorías</a>
-            <a href="{{ route('products.index') }}" class="px-4 py-2 text-gray-700 hover:text-gray-900 hover:underline underline-offset-8 font-bold">Productos</a>
-        </nav>
-    </div>
+    @include('products.partials.products-nav')
 
     <div class="container mx-auto">
         
@@ -20,19 +14,7 @@
             <h1 class="text-red-600 text-2xl font-bold">Edición y creación de Productos</h1>
         </div>
 
-        <div class="mx-auto text-center mt-3 mb-3 py-3 w-full">
-            <form action="{{ route('products.index') }}" method="get">
-                
-                <label for="search" class="text-red-600 text-md font-semibold">Buscar producto</label>
-
-                <input type="text" name="search" id="search" placeholder="Nombre producto">
-
-                <button type="submit"
-                class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
-                >Buscar</button>
-
-            </form>
-        </div>
+        @include('products.partials.search-bar')
 
         <div class="flex flex-row justify-left gap-4 mt-3 py-2 px-6">
             <form action="{{ route('products.index') }}" method="GET">
@@ -94,11 +76,20 @@
             </div>
         @endif
 
-        <div class="text-right mx-6 mb-4 pb-4">
-            <a href="{{ route('products.create') }}" 
-            class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
-            Crear producto
-            </a>
+        <div class="flex justify-between mt-4">
+            <div class="text-right mx-6 mb-4 py-4">
+                <a href="{{ route('products.create') }}" 
+                class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
+                Crear producto
+                </a>
+            </div>
+    
+            <div class="mx-6 mb-4 py-4">
+                <a href="{{ route('products.export') }}" 
+                class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
+                Descargar listado productos
+                </a>
+            </div>
         </div>
 
         <div class="mx-auto mt-6 px-4">

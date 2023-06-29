@@ -51,7 +51,7 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getProductsByName(string $name): LengthAwarePaginator
     {
-        return Product::where('name', 'like', '%' . $name . '%')
+        return Product::where('name', 'LIKE', '%' . $name . '%')
                 ->with('subcategory')->paginate(20);
     }
 

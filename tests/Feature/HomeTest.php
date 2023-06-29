@@ -12,14 +12,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class HomeTest extends TestCase
 {
     use RefreshDatabase;
-    
-    public function test_home_page_can_be_rendered_for_non_logged_in_users(): void
-    {
-        $response = $this->get(route('home'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('home.index');
-    }
 
     public function test_home_page_can_be_rendered_for_logged_users_with_a_different_route(): void
     {

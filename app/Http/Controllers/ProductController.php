@@ -39,10 +39,6 @@ class ProductController extends Controller
             $subcategoryId = $request->subcategoryId;
             $products = $this->getFilteredProducts($subcategoryId);
 
-            if ($request->price == 'asc') {
-                $products->orderBy('price', 'asc'); // @phpstan-ignore-line
-            }
-
             return view('products.index', compact('categories', 'categoryId', 'subcategories', 'subcategoryId', 'products'));
 
         } else {
@@ -57,11 +53,10 @@ class ProductController extends Controller
                 $products = $this->productRepository->orderProductsByPrice($request->price);
             } elseif ($request->price == 'desc') {
                 $products = $this->productRepository->orderProductsByPrice($request->price);
-            };
+            }
 
             return view('products.index', compact('categories', 'categoryId', 'products'));
-        };
-
+        }
     }
 
     private function getFilteredSubcategories(?int $categoryId): Collection
