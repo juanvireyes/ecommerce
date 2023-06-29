@@ -36,4 +36,9 @@ class ProductPolicy
     {
         return $user->hasRole(['admin', 'superadmin']);
     }
+
+    public function export(User $user): bool
+    {
+        return $user->hasRole(['admin', 'superadmin']);
+    }
 }
