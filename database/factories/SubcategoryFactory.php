@@ -19,7 +19,7 @@ class SubcategoryFactory extends Factory
     {
         $category = Category::factory()->create();
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'slug' => fake()->slug(),
             'description' => fake()->text(),
             'image' => fake()->imageUrl(),
