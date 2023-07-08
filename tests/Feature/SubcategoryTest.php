@@ -43,9 +43,7 @@ class SubcategoryTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        // @phpstan-ignore-next-line
         $this->category = Category::factory()->create();
-        // @phpstan-ignore-next-line
         $this->categoryId = $this->category->id; // @phpstan ignore-line
     }
 

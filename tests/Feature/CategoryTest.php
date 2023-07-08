@@ -255,10 +255,8 @@ class CategoryTest extends TestCase
 
         $category = Category::factory()->create();
 
-        // @phpstan-ignore-next-line
         $response = $this->delete(route('categories.destroy', $category->id));
 
-        // @phpstan-ignore-next-line
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
 
         $response->assertStatus(302);
@@ -276,10 +274,8 @@ class CategoryTest extends TestCase
 
         $category = Category::factory()->create();
 
-        // @phpstan-ignore-next-line
         $response = $this->delete(route('categories.destroy', $category->id));
 
-        // @phpstan-ignore-next-line
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
 
         $response->assertStatus(302);

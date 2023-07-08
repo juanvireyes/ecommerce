@@ -48,7 +48,6 @@ class OrderTest extends TestCase
 
         $category = Category::factory()->create();
 
-        // @phpstan-ignore-next-line
         $subcategory = Subcategory::factory()->create(['category_id' => $category->id]);
 
         $product = Product::factory()->create(['subcategory_id' => $subcategory->id]);

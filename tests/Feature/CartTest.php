@@ -47,10 +47,8 @@ class CartTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        // @phpstan-ignore-next-line
         $this->category = Category::factory()->create();
 
-        // @phpstan-ignore-next-line
         $this->subcategory = Subcategory::factory()->create(['category_id' => $this->category->id]);
 
         $this->product = Product::factory()->create(['subcategory_id' => $this->subcategory->id]);
