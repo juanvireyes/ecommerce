@@ -38,7 +38,6 @@ class ProductTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        // @phpstan-ignore-next-line
         $this->categoryId = Category::factory()->create()->id;
 
         $this->subcategoryId = Subcategory::factory()->create(['category_id' => $this->categoryId])->id;
