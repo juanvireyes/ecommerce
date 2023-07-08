@@ -17,13 +17,14 @@ use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ClientProductController;
 use App\Http\Controllers\ProductExportController;
+use App\Http\Controllers\ProductsDownloadController;
 use App\Http\Controllers\ClientSubcategoryController;
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('user/info', 'user_info')->name('user.info');
 });
 
-Route::get('vitrina', [ClientController::class, 'index'])->name('clients.index');
+Route::get('/', [ClientController::class, 'index'])->name('clients.index');
 Route::get('vitrina/{category_slug}', [ClientSubcategoryController::class, 'subcategories'])->name('clients.subcategories');
 Route::get('vitrina/{category_slug}/{subcategory_slug}/products', [ClientProductController::class, 'products'])->name('clients.products');
 Route::get('vitrina/{category_slug}/{subcategory_slug}/{product_slug}', [ClientProductController::class, 'show'])->name('clients.product');
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Subcategory'])->g
 Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group( function () {
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/export', ProductExportController::class)->name('products.export');
+    Route::get('products/download', ProductsDownloadController::class)->name('products.download');
     Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('products/create', [ProductController::class, 'store'])->name('product.store');
     Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');

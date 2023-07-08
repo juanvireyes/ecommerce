@@ -6,6 +6,8 @@
 
 @section('content')
 
+    @include('products.partials.session-messages')
+
     @include('products.partials.products-nav')
 
     <div class="container mx-auto">
@@ -17,173 +19,26 @@
         @include('products.partials.search-bar')
 
         <div class="flex flex-row justify-left gap-4 mt-3 py-2 px-6">
-            <form action="{{ route('products.index') }}" method="GET">
-                <select name="categoryId" id="categoryId" class="text-left text-red-500 font-bold w-1/2">
-                    <option value=""></option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" 
-                            @if ($categoryId == $category->id) 
-                                selected 
-                            @endif class="font-bold">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+            
+            @include('products.partials.category-select')
 
-                <button type="submit"
-                class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
-                >Ver subcategorías</button>
-            </form>
-
-
-            <form action="{{ route('products.index') }}" method="get">
-
-                    <label for="price">
-                        Ordenar productos
-                    </label>
-                    <select name="price" id="price">
-                        <option value=""></option>
-                        <option value="desc">Mayor a menor precio</option>
-                        <option value="asc">Menor a mayor precio</option>
-                    </select>
-    
-                    <button type="submit"
-                    class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold"
-                    >Ordenar productos</button>
-                </form>
+            @include('products.partials.price-order')
+            
         </div>
 
-        @if (!empty($categoryId))
-            <div class="flex flex-row justify-left gap-4 mt-3 py-2 px-6">
-                <form action="{{ route('products.index') }}" method="GET">
-                    <div class="flex">
-                        <select name="subcategoryId" id="subcategoryId" class="text-left text-red-500 font-bold w-1/2">
-                            @foreach ($subcategories as $subcategory)
-                                <option value="{{ $subcategory->id }}" 
-                                    @if ($subcategory->id == $subcategoryId)
-                                        selected
-                                    @endif class="font-bold">{{ $subcategory->name }}</option>
-                            @endforeach
-                        </select>
-                        
-                        <input type="hidden" name="categoryId" value={{ $categoryId }}>
-
-                        <button type="submit" 
-                        class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold inline-block w-full">
-                            Filtrar productos
-                        </button>
-                    </div>
-                </form>
-
-            </div>
-        @endif
-
+        @include('products.partials.subcategory-select')
+        
         <div class="flex justify-between mt-4">
-            <div class="text-right mx-6 mb-4 py-4">
-                <a href="{{ route('products.create') }}" 
-                class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
-                Crear producto
-                </a>
-            </div>
-    
-            <div class="mx-6 mb-4 py-4">
-                <a href="{{ route('products.export') }}" 
-                class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
-                Descargar listado productos
-                </a>
-            </div>
+        
+            @include('products.partials.create-product')
+            
+            @include('products.partials.download-products')
+            
         </div>
 
-        <div class="mx-auto mt-6 px-4">
-            <table class="table-auto border border-separate mx-auto w-full">
-                <thead>
-                    <tr class="text-center">
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Nombre Producto
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Descripción
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Precio
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Stock
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Disponible
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Orden en el display
-                        </th>
-                        <th scope="col"
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Subcategoría
-                        </th>
-                        <th scope="col" 
-                        class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($products as $product)
-                        <tr class="text-center">
-                            <td class="border border-slate-300 py-4">
-                                {{ $product->name }}
-                            </td>
-                            <td class="border border-slate-300 py-4 px-2">
-                                {{ $product->description }}
-                            </td>
-                            <td class="border border-slate-300 py-4 px-2">
-                                {{ $product->price }}
-                            </td>
-                            <td class="border border-slate-300 py-4 px-2">
-                                {{ $product->stock }}
-                            </td>
-                            <td class="border border-slate-300 py-4 px-2">
-                                {{ $product->active }}
-                            </td>
-                            <td class="border border-slate-300 py-4">
-                                {{ $product->order }}
-                            </td>
-                            <td class="border border-slate-300 py-4 px-2">
-                                <a href="{{ route('subcategories.index') }}" 
-                                    class="text-gray-700 hover:text-red-500 text-sm font-bold">
-                                    {{ $product->subcategory->name }}
-                                </a>
-                            </td>
-                            <td class="border border-slate-300 py-4">
-                                <div class="flex justify-items-center">
-                                    <div class="mx-auto py-2 px-2">
-                                        <a href="{{ route('products.edit', $product->id) }}" class="bg-blue-500 text-white text-sm font-bold rounded-full px-4 py-1">Editar</a>
-                                    </div>
-                                    <div class="mx-auto py-2 px-2">
-                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button 
-                                                class="bg-yellow-300 text-medium font-bold hover:bg-black text-black hover:text-white rounded-full px-4">
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div>
-            {{ $products->links() }}
-        </div>
+        @include('products.partials.products-table')
+        
     </div>
 
-    </div>
 @endsection
 @endif

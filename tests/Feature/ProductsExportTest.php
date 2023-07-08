@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Exports\ProductsExport;
+use App\Jobs\ProductsDownloadNotificationJob;
 use App\Jobs\ProductsExportJob;
 use Tests\TestCase;
 use App\Models\User;
@@ -10,6 +12,9 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsExportTest extends TestCase
 {
@@ -36,10 +41,7 @@ class ProductsExportTest extends TestCase
         $this->user->assignRole($this->superadminRole);
         $this->actingAs($this->user)
             ->get(route('products.export'))
-            ->assertOk()
-            ->assertJsonFragment([
-                'data' => 'products.csv'
-            ]);
+            ->assertRedirect(route('products.index'));;
     }
 
     /** * @test   */
@@ -48,10 +50,7 @@ class ProductsExportTest extends TestCase
         $this->user->assignRole($this->adminRole);
         $this->actingAs($this->user)
             ->get(route('products.export'))
-            ->assertOk()
-            ->assertJsonFragment([
-                'data' => 'products.csv'
-            ]);
+            ->assertRedirect(route('products.index'));
     }
 
     /** * @test  */
@@ -64,17 +63,49 @@ class ProductsExportTest extends TestCase
     }
 
     /** * @test */
-    public function it_should_enqueue_export_products_job(): void
+    public function it_queued_and_chained_with_download_notification_job_for_superadmin(): void
     {
-        Queue::fake();
+        Excel::fake();
+        Carbon::setTestNow(now());
+        Storage::fake('public');
+
         $this->user->assignRole($this->superadminRole);
         $this->actingAs($this->user)
             ->get(route('products.export'))
-            ->assertOk()
-            ->assertJsonFragment([
-                'data' => 'products.csv'
-            ]);
+            ->assertRedirect(route('products.index'));
 
-        Queue::assertPushed(ProductsExportJob::class);
+        Excel::assertQueuedWithChain([
+            new ProductsDownloadNotificationJob($this->user)
+        ]);
+    }
+
+    /** * @test */
+    public function it_queued_and_chained_with_download_notification_job_for_admin(): void
+    {
+        Excel::fake();
+        Carbon::setTestNow(now());
+        Storage::fake('public');
+        
+        $this->user->assignRole($this->adminRole);
+        $this->actingAs($this->user)
+            ->get(route('products.export'))
+            ->assertRedirect(route('products.index'));
+        
+        Excel::assertQueuedWithChain([
+            new ProductsDownloadNotificationJob($this->user)
+        ]);
+    }
+
+    /** * @test */
+    public function it_cant_be_queued_and_chained_with_download_notification_for_client(): void
+    {
+        Excel::fake();
+        Carbon::setTestNow(now());
+        Storage::fake('public');
+
+        $this->user->assignRole($this->clientRole);
+        $this->actingAs($this->user)
+            ->get(route('products.export'))
+            ->assertForbidden();
     }
 }

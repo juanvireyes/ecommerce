@@ -3,11 +3,7 @@
 @section('categories')
     @section('content-name', 'Categorías')
     <div class="flex justify-center text-center">
-        @if (Auth::user())
         <form action="{{ route('clients.index') }}" method="GET" class="mx-auto justify-center text-center">
-        @else
-        <form action="{{ route('home') }}" method="GET" class="mx-auto justify-center text-center">
-        @endif
             <label for="search" 
             class="mx-auto text-red-700 text-center font-bold text-md mr-3 mb-2 py-2">Buscar categorías: </label>
             <input 
