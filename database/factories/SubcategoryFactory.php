@@ -17,13 +17,13 @@ class SubcategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $category = Category::factory()->create();
+        $category = Category::all()->random();
         return [
             'name' => fake()->unique()->word(),
             'slug' => fake()->slug(),
             'description' => fake()->text(),
             'image' => fake()->imageUrl(),
-            'order' => fake()->unique()->numberBetween(4, 24),
+            'order' => fake()->unique()->numberBetween(0, 24),
             'category_id' => $category->id,
         ];
     }

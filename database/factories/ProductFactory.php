@@ -28,7 +28,7 @@ class ProductFactory extends Factory
             'image' => 'products/add-image.png',
             'price' => fake()->randomFloat(2, 1, 1000),
             'stock' => fake()->numberBetween(1, 100),
-            'order' => fake()->unique()->numberBetween(53, 100),
+            'order' => fake()->unique()->numberBetween(0, 1000),
             'subcategory_id' => $subcategory_id,
         ];
     }
