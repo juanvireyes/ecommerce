@@ -20,7 +20,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $subcategory_id = Subcategory::all()->random()->id;
-        $name = fake()->word() . ' ' . fake()->word() . ' ' . fake()->word();
+        $name = fake()->unique()->word() . ' ' . fake()->word() . ' ' . fake()->word();
         return [
             'name' => $name,
             'slug' => Str::of($name)->slug('-'),
