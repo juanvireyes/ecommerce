@@ -15,16 +15,16 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
 
     public function getSubcategories(): Collection
     {
-        $subcategories = Cache::remember($this->cacheKey, 10, function () {
+        Cache::forget($this->cacheKey);
+
+        return Cache::remember($this->cacheKey, 10, function () {
             return Subcategory::with('category')->orderBy('order')->get();
         });
-
-        return $subcategories;
     }
 
     public function getSubcategoriesFromCategory(Category $category): Collection
     {
-        
+        $category->load('subcategories');
         return $category->subcategories;
     }
 

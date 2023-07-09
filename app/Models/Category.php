@@ -14,11 +14,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $description
  * @property string $image
  * @property int $order
+ * @property mixed $subcategories
  */
 class Category extends Model
 {
     use HasFactory;
 
+//    public mixed $subcategories;
     protected $fillable = [
         'name',
         'slug',

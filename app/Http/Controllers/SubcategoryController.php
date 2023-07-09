@@ -16,19 +16,17 @@ use App\Repositories\SubcategoryRepository;
 
 class SubcategoryController extends Controller
 {
-    private $categoryRepository;
-    private $subcategoryRepository;
-
-    public function __construct(CategoryRepository $categoryRepository, SubcategoryRepository $subcategoryRepository) 
+    public function __construct(private CategoryRepository $categoryRepository, private SubcategoryRepository $subcategoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
         $this->subcategoryRepository = $subcategoryRepository;
     }
-    
+
     public function index(Request $request): View
     {
         $categories = $this->categoryRepository->getAllCategories();
-        $subcategories = $this->getSubcategories($request->categoryId);
+        $subcategories = $this->getSubcategories($request->input('categoryId'));
+        $subcategories->load('category');
 
         return view('subcategories.index', compact('subcategories', 'categories'));
     }
@@ -55,7 +53,7 @@ class SubcategoryController extends Controller
         $validated = $request->validated();
         $validated['slug'] = Str::of($validated['name'])->slug('-');
         $validated['category_id'] = $request->category_id;
-        
+
 
         if ($request->hasFile('image')) {
             if  (!$request->file('image')->isValid()) {
@@ -70,7 +68,7 @@ class SubcategoryController extends Controller
 
         return redirect()->route('subcategories.index');
     }
-   
+
     public function edit(Subcategory $subcategory): View
     {
         $categories = $this->categoryRepository->getAllCategories();
@@ -78,7 +76,7 @@ class SubcategoryController extends Controller
 
         return view('subcategories.edit', compact('subcategory', 'categories'));
     }
-    
+
     public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory): RedirectResponse
     {
         $this->authorize('update', $subcategory);

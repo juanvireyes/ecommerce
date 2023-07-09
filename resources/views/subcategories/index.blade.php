@@ -26,14 +26,14 @@
                         <option value="{{ $category->id }}" class="font-bold">{{ $category->name }}</option>
                     @endforeach
                 </select>
-                <button type="submit" 
+                <button type="submit"
                 class="ml-4 px-4 py-2 rounded-md bg-red-500 text-black hover:text-white text-md font-bold">
                 Filtrar</button>
             </div>
         </form>
 
         <div class="text-right mx-6 mb-4 pb-4">
-            <a href="{{ route('subcategories.create') }}" 
+            <a href="{{ route('subcategories.create') }}"
             class="bg-red-400 px-5 py-3 rounded-md drop-shadow-xl text-white font-semibold">
             Crear subcategoría
             </a>
@@ -43,15 +43,15 @@
             <table class="table-auto border border-separate mx-auto w-full">
                 <thead>
                     <tr class="text-center">
-                        <th scope="col" 
+                        <th scope="col"
                         class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
                             Nombre Subcategoría
                         </th>
-                        <th scope="col" 
+                        <th scope="col"
                         class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
                             Descripción
                         </th>
-                        <th scope="col" 
+                        <th scope="col"
                         class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
                             Orden en el display
                         </th>
@@ -59,7 +59,7 @@
                         class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
                             Categoría
                         </th>
-                        <th scope="col" 
+                        <th scope="col"
                         class="mx-4 px-4 uppercase text-red-500 font-semibold border border-slate-300">
                             Acciones
                         </th>
@@ -78,7 +78,7 @@
                                 {{ $subcategory->order }}
                             </td>
                             <td class="border border-slate-300 py-4 px-2">
-                                <a href="{{ route('products.index', $subcategory->category->slug) }}" 
+                                <a href="{{ route('categories.index') }}"
                                     class="text-gray-700 hover:text-red-500 text-sm font-bold">
                                     {{ $subcategory->category->name }}
                                 </a>
@@ -92,7 +92,7 @@
                                         <form action="{{ route('subcategories.destroy', $subcategory->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button 
+                                            <button
                                                 class="bg-yellow-300 text-medium font-bold hover:bg-black text-black hover:text-white rounded-full px-4">
                                                 Eliminar
                                             </button>
