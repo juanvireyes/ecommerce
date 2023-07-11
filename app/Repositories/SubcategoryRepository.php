@@ -38,6 +38,11 @@ class SubcategoryRepository implements SubcategoryRepositoryInterface
         return Subcategory::where('slug', $slug)->first();
     }
 
+    public function getSubcategoryByName(string $name): Subcategory
+    {
+        return Subcategory::where('name', $name)->first();
+    }
+
     public function storeSubcategory(array $data): Subcategory
     {
         $subcategory = Subcategory::create($data);

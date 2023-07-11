@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductsImportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
@@ -59,6 +60,7 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/export', ProductExportController::class)->name('products.export');
     Route::get('products/download', ProductsDownloadController::class)->name('products.download');
+    Route::post('products/import', [ProductsImportController::class, 'upload'])->name('products.import');
     Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('products/create', [ProductController::class, 'store'])->name('product.store');
     Route::get('products/{product}', [ProductController::class, 'edit'])->name('products.edit');

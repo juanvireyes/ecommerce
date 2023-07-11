@@ -10,16 +10,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ProductsDownloadNotificationJob implements ShouldQueue
 {
-    use Queueable, SerializesModels; 
+    use Queueable, SerializesModels;
 
-    public $user;
+    public User $user;
 
     public function __construct(User $user)
     {
         $this->user = $user;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->user->notify(new ExportReadyNotification());
     }

@@ -2,16 +2,20 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property mixed $product
+ */
 class UpdateProductFormRequest extends FormRequest
 {
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, Rule|array|string>
      */
     public function rules(): array
     {
@@ -19,9 +23,9 @@ class UpdateProductFormRequest extends FormRequest
         $uniqueOrder = new Unique ('products', 'order');
         return [
             'name' => [
-                'required', 
-                'string', 
-                $uniqueName->ignore($this->product->id), 
+                'required',
+                'string',
+                $uniqueName->ignore($this->product->id),
                 'max:100'
             ],
             'description' => 'string|nullable',

@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class ProductsExport implements FromQuery, WithHeadings, WithMapping
 {
     use Exportable;
-    
+
     public function query(): Builder
     {
         return Product::query()->with('subcategory');
@@ -31,7 +31,7 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping
             'Stock',
             'Estado',
             'Orden display',
-            'ID Subcategoría',
+            'Subcategoría',
         ];
     }
 
