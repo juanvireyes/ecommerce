@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -48,6 +49,11 @@ class Product extends Model
         return $this->hasMany(CartItem::class);
     }
 
+    public function productsRotationReport(): HasOne
+    {
+        return $this->hasOne(ProductRotationReport::class);
+    }
+
     public function reduceStock(int $quantity): self
     {
         if($quantity <= $this->stock) {
@@ -66,9 +72,9 @@ class Product extends Model
     public function increaseStock(int $quantity): self
     {
         $this->stock += $quantity;
-        
+
         $this->save();
-        
+
         return $this;
     }
 
