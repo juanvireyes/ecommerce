@@ -52,7 +52,7 @@ class ProductRotationReportController extends Controller
         } elseif ($filter == 'lessSelled') {
             $column = 'sold_units';
         }
-        //dd($request->all());
+
         $fileName = 'Rotación Productos - ' . now()->format('d-m-Y') . '.xlsx';
         (new ProductRotationReportExport($column, $order))->queue('exports/' . $fileName)->chain([
             new ProductRotationRepNotificationJob(request()->user())
