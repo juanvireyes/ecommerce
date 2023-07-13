@@ -9,11 +9,8 @@ use App\Repositories\ProductRepository;
 
 class TestingController extends Controller
 {
-    public function index(Request $request, ProductRotationRepository $data): View
+    public function index(Request $request, ProductRotationRepository $data)
     {
-        $registers = $data->getAllRegisters();
-
-        //dd($registers[0]);
-        return view('testing.testing-index', compact('registers'));
+        //
     }
 }
