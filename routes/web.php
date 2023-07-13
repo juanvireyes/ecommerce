@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProductRotationRepDownloadController;
+use App\Http\Controllers\ProductRotationReportController;
 use App\Http\Controllers\ProductsImportController;
+use App\Http\Controllers\ReportsIndexController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
@@ -67,6 +70,13 @@ Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\Product'])->group
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 })->middleware(['can:create,App\Models\Product', 'can:update,App\Models\Product']);
+
+Route::middleware(['auth', 'verified', 'can:viewAny,App\Models\ProductRotationReport'])->group( function () {
+    Route::get('reports', [ReportsIndexController::class, 'index'])->name('reports.index');
+    Route::get('reports/products', [ProductRotationReportController::class, 'index'])->name('reports.products');
+    Route::get('reports/products/export', [ProductRotationReportController::class, 'exportProductsReport'])->name('rep.products.export');
+    Route::get('reports/products/download', ProductRotationRepDownloadController::class)->name('rep.products.download');
+})->middleware(['can:create,App\Models\ProductRotationReport', 'can:update,App\Models\ProductRotationReport']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('user-dashboard', [UserController::class, 'index'])->name('user.dashboard');

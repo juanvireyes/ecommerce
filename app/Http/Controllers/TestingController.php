@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\ProductRotationRepository;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepository;
 
 class TestingController extends Controller
 {
-    public function index(Request $request, ProductRepository $productRepository): View
+    public function index(Request $request, ProductRotationRepository $data): View
     {
-        $products = $productRepository->getAllProducts();
+        $registers = $data->getAllRegisters();
 
-        if($request->search) {
-            $products = $productRepository->getProductsByName($request->search);
-        }
-
-        return view('testing.testing-index', compact('products'));
+        //dd($registers[0]);
+        return view('testing.testing-index', compact('registers'));
     }
 }

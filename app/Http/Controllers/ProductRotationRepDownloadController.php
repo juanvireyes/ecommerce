@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class ProductsDownloadController extends Controller
+class ProductRotationRepDownloadController extends Controller
 {
-    public function __invoke(): BinaryFileResponse | RedirectResponse
+    public function __invoke(Request $request): BinaryFileResponse|RedirectResponse
     {
-        $filePath = 'exports/products - ' . now()->format('d-m-Y') . '.xlsx';;
+        $filePath = 'exports/Rotación Productos - ' . now()->format('d-m-Y') . '.xlsx';
         $filePath = str_replace('\\', '/', $filePath);
 
         if (!Storage::exists($filePath)) {

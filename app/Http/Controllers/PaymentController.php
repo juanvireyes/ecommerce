@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateProductReportRegisterAction;
+use App\Models\Order;
+use App\Models\ProductRotationReport;
+use App\Repositories\ProductRotationRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;

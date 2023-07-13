@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Actions\CreatePlaceToPayAuthAction;
+use App\Actions\CreateProductReportRegisterAction;
 use App\Models\Order;
+use App\Models\ProductRotationReport;
+use App\Repositories\ProductRotationRepository;
 use Illuminate\Http\Request;
 use App\Actions\OrderUpdateAction;
 use Illuminate\Support\Facades\Log;
@@ -16,13 +19,13 @@ use Illuminate\View\View;
 
 class PlaceToPayPaymentService extends PaymentService
 {
-    private OrderRepository $orderRepository;
-    private CreatePlaceToPayAuthAction $placeToPayAuthAction;
-
-    public function __construct()
+    public function __construct(
+        private OrderRepository $orderRepository,
+        private CreatePlaceToPayAuthAction $placeToPayAuthAction,
+    )
     {
         $this->orderRepository = new OrderRepository();
-        $this->placeToPayAuthAction = new CreatePlaceToPayAuthAction(); 
+        $this->placeToPayAuthAction = new CreatePlaceToPayAuthAction();
     }
 
     public function pay(Request $request, GeneralRequestBuilder $builtRequest): RedirectResponse
@@ -34,11 +37,11 @@ class PlaceToPayPaymentService extends PaymentService
         $orderId = $request->order_id;
 
         $order = $orderRepository->getOrderById($orderId);
-        
+
         $result = Http::post(config('placetopay.url').'/api/session', $builtRequest->build($order));
 
         Log::info('Response: '.print_r($result->json()['requestId'], true));
-        
+
         if ($result->ok()) {
 
             $data = [
@@ -63,7 +66,7 @@ class PlaceToPayPaymentService extends PaymentService
 
         $lastOrder = $this->orderRepository->getUserLastOrder($user);
 
-        $response = Http::post(config('placetopay.url').'/api/session/'.$lastOrder->order_number, 
+        $response = Http::post(config('placetopay.url').'/api/session/'.$lastOrder->order_number,
             [
                 'auth' => $this->placeToPayAuthAction->execute()
             ]
@@ -78,6 +81,11 @@ class PlaceToPayPaymentService extends PaymentService
             if ($status == 'APPROVED') {
 
                 $lastOrder->completed();
+
+                $repository = new ProductRotationRepository();
+                $register = new ProductRotationReport();
+                $orderReport = new CreateProductReportRegisterAction($lastOrder, $repository, $register);
+                $orderReport->execute();
 
                 $status = $lastOrder->status;
 

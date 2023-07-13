@@ -22,6 +22,15 @@ class ProductRotationReport extends Model
 
     public function products(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function increaseSoldUnits(int $quantity): int
+    {
+        $this->sold_units += $quantity;
+
+        $this->save();
+
+        return $this->sold_units;
     }
 }
