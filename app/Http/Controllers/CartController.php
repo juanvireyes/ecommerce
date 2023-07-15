@@ -27,7 +27,7 @@ class CartController extends Controller
         }
 
         $cart = $user->cart;
-            
+
         $cartItems = $cart ? collect($cart->cartItems)->groupBy('product_id')->map(function ($items) {
             $item = $items->first();
             $item->quantity = $items->sum('quantity');
@@ -51,16 +51,14 @@ class CartController extends Controller
         $userId = auth()->id();
 
         if(!$userId) {
-
             return redirect()->route('login');
-
         }
 
         $cart = Cart::firstOrCreate([
             'user_id' => $userId
         ]);
-        
-        $cartItem = CartItemController::store($cart, $product, $quantity);
+
+        CartItemController::store($cart, $product, $quantity);
 
         try {
             $product->reduceStock($quantity);
@@ -69,7 +67,6 @@ class CartController extends Controller
         };
 
         $product->updateStatus();
-
         $cart->calculateCartTotalAmountTest();
 
         return back()->with('success', 'Producto agregado al carrito');
@@ -78,7 +75,6 @@ class CartController extends Controller
     public function clearCart(Cart $cart): RedirectResponse
     {
         $cart->clearCart();
-
         return redirect()->route('cart.index');
     }
 }

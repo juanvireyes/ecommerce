@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Unique;
 
-class StoreCategoryRequest extends FormRequest
+/**
+ * @property mixed $category
+ */
+class UpdateCategoryApiRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -13,11 +17,18 @@ class StoreCategoryRequest extends FormRequest
 
     public function rules(): array
     {
+        $uniqueName = new Unique('categories', 'name');
+        $uniqueOrder = new Unique('categories', 'order');
         return [
-            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'unique:categories,name', 'max:100'],
+            'name' => [
+                'required',
+                'string',
+                'regex:/^[\pL\s]+$/u',
+                $uniqueName->ignore($this->category->id),
+                'max:100'],
             'description' => 'string|nullable',
             'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',
-            'order' => 'integer|unique:categories,order',
+            'order' => ['integer', $uniqueOrder->ignore($this->category->id)],
         ];
     }
 
@@ -25,8 +36,6 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name.regex' => 'El nombre solo puede contener letras y espacios',
-            'name.unique' => 'Este nombre de categoría ya existe',
-            'order.unique' => 'El orden en el display que quieres asignar ya está ocupado',
             'image.max' => 'El tamaño máximo permitido es 2MB',
             'image.mimes' => 'El formato de la imagen debe ser jpeg, png o jpg'
         ];

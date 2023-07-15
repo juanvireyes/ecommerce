@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
-use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Validation\Rules\Unique;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Unique;
 
 /**
  * @property mixed $product
  */
-class UpdateProductFormRequest extends FormRequest
+class UpdateProductApiRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -37,7 +36,7 @@ class UpdateProductFormRequest extends FormRequest
                 'nullable',
                 'min:0'
             ],
-            'subcategory_id' => 'required|integer|min:1|exists:subcategories.id'
+            'subcategory_id' => 'required|integer|min:1|exists:subcategories,id'
         ];
     }
 

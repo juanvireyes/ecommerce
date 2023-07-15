@@ -6,23 +6,26 @@ use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Unique;
 
+/**
+ * @property mixed $category
+ */
 class UpdateCategoryRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
-     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         $uniqueName = new Unique('categories', 'name');
         $uniqueOrder = new Unique('categories', 'order');
         return [
             'name' => [
-                'required', 
-                'string', 
-                'regex:/^[\pL\s]+$/u', 
-                $uniqueName->ignore($this->category->id), 
+                'required',
+                'string',
+                'regex:/^[\pL\s]+$/u',
+                $uniqueName->ignore($this->category->id),
                 'max:100'],
             'description' => 'string|nullable',
             'image' => 'file|mimes:jpeg,png,jpg|max:2048|nullable',

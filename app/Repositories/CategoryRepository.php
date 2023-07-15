@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,9 +27,10 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::findOrFail($id);
     }
 
-    public function getCategoryByName(string $name): Category
+    public function getCategoryByName(string $name): Builder
     {
-        return Category::where('name', $name)->first();
+        return Category::query()
+            ->where('name', 'like', '%'.$name.'%');
     }
 
     public function getCategoryBySlug(string $slug): Category
@@ -66,6 +68,6 @@ class CategoryRepository implements CategoryRepositoryInterface
 
             return false;
 
-        };
+        }
     }
 }

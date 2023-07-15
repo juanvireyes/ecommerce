@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    private $categoriesRepository;
+    private CategoryRepository $categoriesRepository;
 
     public function __construct(CategoryRepository $categoriesRepository)
     {
@@ -18,9 +18,9 @@ class ClientController extends Controller
     public function index(Request $request): View
     {
         $categories = $this->categoriesRepository->getAllCategories();
-        $search = $request->filter;
+        $search = $request->input('filter');
 
-        if ($search !== null) {
+        if ($search) {
             $search = strtolower($search);
             $filtered_categories = $this->filterCategories($search);
         }
@@ -32,7 +32,7 @@ class ClientController extends Controller
 
     public function filterCategories(string $search) : array
     {
-        $filteredCategories = $this->categoriesRepository->getCategoryByName($search);
+        $filteredCategories = $this->categoriesRepository->getCategoryByName($search)->get();
 
         return $filteredCategories ? [$filteredCategories] : [];
     }

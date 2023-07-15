@@ -6,12 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductFormRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
-     */
     public function rules(): array
     {
         return [
@@ -21,7 +20,7 @@ class StoreProductFormRequest extends FormRequest
             'price' => ['required', 'numeric'],
             'stock' => 'required|integer|min:0',
             'order' => 'required|integer|min:0|nullable',
-            'subcategory_id' => 'required|integer|min:0'
+            'subcategory_id' => 'required|integer|min:0|exists:subcategories,id'
         ];
     }
 
@@ -36,7 +35,8 @@ class StoreProductFormRequest extends FormRequest
             'price' => 'El precio es requerido',
             'price.numeric' => 'El precio debe ser numérico',
             'stock' => 'El stock es requerido',
-            'subcategory_id' => 'La subcategoría es requerida'
+            'subcategory_id.required' => 'La subcategoría es requerida',
+            'subcategory_id.exists' => 'La subcategoría no existe'
         ];
     }
 }

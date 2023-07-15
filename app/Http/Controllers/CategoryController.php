@@ -12,7 +12,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    private $categoryRepository;
+    private CategoryRepository $categoryRepository;
 
     public function __construct(CategoryRepository $categoryRepository) {
         $this->categoryRepository = $categoryRepository;
@@ -30,7 +30,7 @@ class CategoryController extends Controller
     }
 
     public function store(StoreCategoryRequest $request): RedirectResponse
-    {   
+    {
         $validated = $request->validated();
         $validated['slug'] = Str::of($request->name)->slug('-');
 

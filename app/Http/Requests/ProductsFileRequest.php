@@ -7,9 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProductsFileRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -25,7 +22,7 @@ class ProductsFileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'productsFile.required' => 'Es necesario subir un archivo',
+            'productsFile.required' => 'Es necesario adjuntar un archivo',
             'productsFile.mimes' => 'El formato del archivo debe ser de tipo excel, cvs u ods',
             'productsFile.max' => 'El tamaño del archivo no puede superar los 2MB'
         ];

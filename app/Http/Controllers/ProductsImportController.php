@@ -15,11 +15,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsImportController extends Controller
 {
-    public function upload(Request $request): RedirectResponse
+    public function upload(ProductsFileRequest $request): RedirectResponse
     {
-        //dd(auth()->user());
-        (new ProductsImport)->queue($request->file('productsFile'))->chain([
-            new SuccessImportProductsNotificationJob(auth()->user())
+        $validated = $request->validated();
+        (new ProductsImport)->queue($validated['productsFile'])->chain([
+            new SuccessImportProductsNotificationJob(request()->user())
         ]);
 
         return redirect()->route('products.index')
