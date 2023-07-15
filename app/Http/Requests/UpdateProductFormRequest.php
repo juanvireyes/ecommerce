@@ -37,7 +37,7 @@ class UpdateProductFormRequest extends FormRequest
                 'nullable',
                 'min:0'
             ],
-            'subcategory_id' => 'required|integer|min:1|exists:subcategories.id'
+            'subcategory_id' => 'required|integer|min:1|exists:subcategories,id'
         ];
     }
 

@@ -86,7 +86,7 @@ class ProductTest extends TestCase
         $this->assertTrue($this->user->hasRole($role));
 
         $this->actingAs($this->user);
-        
+
         $response = $this->get(route('products.index'));
 
         $response->assertStatus(403);
@@ -292,7 +292,7 @@ class ProductTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->get(route('products.edit', $this->product->id));
-        
+
         $response->assertStatus(200);
         $response->assertViewIs('products.edit');
     }
@@ -308,7 +308,7 @@ class ProductTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->get(route('products.edit', $this->product->id));
-        
+
         $response->assertStatus(200);
         $response->assertViewIs('products.edit');
     }
@@ -324,7 +324,7 @@ class ProductTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->get(route('products.edit', $this->product->id));
-        
+
         $response->assertStatus(403);
     }
 
